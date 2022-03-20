@@ -12,6 +12,8 @@ object Release {
 }
 
 object Version {
+    const val kotlinVersion = "1.6.10"
+    const val spek = "2.0.18"
     const val activityKtx = "1.4.0"
     const val fragmentKtx = "1.4.0"
     const val androidJunit = "3.4.0"
@@ -86,6 +88,9 @@ object TestLibraries {
     const val junit = "junit:junit:${Version.junit}"
     const val junit5 = "org.junit.jupiter:junit-jupiter:${Version.junit5}"
     const val robolectric = "org.robolectric:robolectric:${Version.robolectric}"
+    const val spekDsl = "org.spekframework.spek2:spek-dsl-jvm:${Version.spek}"
+    const val spekRunner = "org.spekframework.spek2:spek-runner-junit5:${Version.spek}"
+    const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Version.kotlinVersion}"
 }
 
 object AndroidTestLibraries {
