@@ -9,7 +9,9 @@ interface BreathPatternRepository {
 
     suspend fun getBreathPatternItems(): List<BreathPatternItem>
 
-    suspend fun getBreathPatternItemsByUuid(uuid: String): BreathPatternItem
+    suspend fun getBreathPatternItemByUuid(uuid: String): BreathPatternItem?
+
+    suspend fun addBreathPattern(value: BreathPatternItem)
 
     suspend fun updateBreathPattern(value: BreathPatternItem)
 
