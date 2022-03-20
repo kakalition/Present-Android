@@ -3,7 +3,7 @@ package com.daggery.present.domain.repositories
 import kotlinx.coroutines.flow.Flow
 import com.daggery.present.domain.entities.BreathPatternItem
 
-interface BreathRepository {
+interface BreathPatternRepository {
 
     suspend fun getBreathPatternItemsFlow(): Flow<List<BreathPatternItem>>
 
