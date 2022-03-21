@@ -4,6 +4,7 @@ import com.android.build.gradle.LibraryExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 class CommonPlugin : Plugin<Project> {
@@ -40,6 +41,20 @@ class CommonPlugin : Plugin<Project> {
                             )
                         }
                     }
+                }
+
+                with(project) {
+                    addAndroidCore()
+                    addCoroutineCore()
+                    addHilt()
+
+                    addJunit5()
+                    addSpek()
+                    addEspresso()
+                }
+
+                project.dependencies {
+                    add("testImplementation", "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
                 }
 
                 buildFeatures.viewBinding = true

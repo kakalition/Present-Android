@@ -2,14 +2,21 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("common-plugin")
+    id("dagger.hilt.android.plugin")
 }
 
 dependencies {
+    implementation(project(Modules.domain))
 
-    addAndroidCore()
-    addJunit5()
-    addSpek()
-    addEspresso()
+    addRoom()
+}
+
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas")
+    }
+
+    correctErrorTypes = true
 }
 
 tasks.withType<Test> {
