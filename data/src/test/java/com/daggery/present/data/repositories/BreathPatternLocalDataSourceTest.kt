@@ -1,17 +1,14 @@
 package com.daggery.present.data.repositories
 
 import com.daggery.present.data.db.FakeBreathPatternDao
-import com.daggery.present.data.entities.BreathPatternItemEntity
 import com.daggery.present.data.mappers.BreathPatternItemEntityMapper
 import com.daggery.present.domain.entities.BreathPatternItem
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
