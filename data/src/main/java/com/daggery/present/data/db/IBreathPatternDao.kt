@@ -1,7 +1,6 @@
 package com.daggery.present.data.db
 
 import com.daggery.present.domain.entities.BreathPatternItem
-import com.daggery.present.domain.repositories.BreathPatternRepository
 import kotlinx.coroutines.flow.Flow
 
 internal interface IBreathPatternDao {
