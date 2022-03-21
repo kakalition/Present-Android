@@ -132,12 +132,20 @@ fun Project.addRobolectric() {
 
 fun Project.addEspresso() {
     dependencies {
-        add("testImplementation", AndroidTestLibraries.espressoCore)
+        add("androidTestImplementation", AndroidTestLibraries.espressoCore)
     }
 }
 
 fun Project.addAndroidTestJunit() {
     dependencies {
-        add("testImplementation", AndroidTestLibraries.androidJunit)
+        add("androidTestImplementation", AndroidTestLibraries.androidJunit)
+    }
+}
+
+fun Project.addSpek() {
+    dependencies {
+        add("testImplementation", TestLibraries.spekDsl)
+        add("testImplementation", TestLibraries.spekRunner)
+        add("testImplementation", TestLibraries.kotlinReflect)
     }
 }

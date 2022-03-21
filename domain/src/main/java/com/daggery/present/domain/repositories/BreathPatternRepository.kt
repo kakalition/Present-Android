@@ -5,7 +5,7 @@ import com.daggery.present.domain.entities.BreathPatternItem
 
 interface BreathPatternRepository {
 
-    suspend fun getBreathPatternItemsFlow(): Flow<List<BreathPatternItem>>
+    fun getBreathPatternItemsFlow(): Flow<List<BreathPatternItem>>
 
     suspend fun getBreathPatternItems(): List<BreathPatternItem>
 

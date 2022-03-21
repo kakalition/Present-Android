@@ -7,6 +7,6 @@ data class BreathPatternItem(
     val inhaleDuration: Int,
     val holdAfterInhaleDuration: Int,
     val exhaleDuration: Int,
-    val holdAfterDuration: Int,
+    val holdAfterExhaleDuration: Int,
     val repetitions: Int
 )

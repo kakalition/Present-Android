@@ -8,7 +8,7 @@ gradlePlugin {
     plugins {
         register("common-plugin") {
             id = "common-plugin"
-            implementationClass = "com.daggery.buildsrc.CommonPlugin"
+            implementationClass = "CommonPlugin"
         }
     }
 }
