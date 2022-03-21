@@ -13,14 +13,18 @@ internal object BreathPatternItemEntityMapperTest : Spek({
         val fakeBreathPatternItem = BreathPatternItem("-", "Fake", 0, 1, 1, 1, 1, 0)
         val fakeBreathPatternItemEntity = BreathPatternItemEntity("-", "Fake", 0, 1, 1, 1, 1, 0)
 
-        it("returns BreathPatternItemEntity") {
-            val value = sut.toBreathPatternItemEntity(fakeBreathPatternItem)
-            Assertions.assertEquals(fakeBreathPatternItemEntity, value)
+        describe("calling toBreathPatternItemEntity()") {
+            it("returns BreathPatternItemEntity") {
+                val value = sut.toBreathPatternItemEntity(fakeBreathPatternItem)
+                Assertions.assertEquals(fakeBreathPatternItemEntity, value)
+            }
         }
 
-        it("returns BreathPatternItem") {
-            val value = sut.toBreathPatternItem(fakeBreathPatternItemEntity)
-            Assertions.assertEquals(fakeBreathPatternItem, value)
+        describe("calling toBreathPatternItem()") {
+            it("returns BreathPatternItem") {
+                val value = sut.toBreathPatternItem(fakeBreathPatternItemEntity)
+                Assertions.assertEquals(fakeBreathPatternItem, value)
+            }
         }
 
     }
