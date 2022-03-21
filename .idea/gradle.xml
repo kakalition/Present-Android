@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/component/reminderpage" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/sharedassets" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

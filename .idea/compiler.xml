@@ -11,6 +11,7 @@
       <module name="Present.component.patternlistpage" target="11" />
       <module name="Present.component.reminderpage" target="11" />
       <module name="Present.data" target="11" />
+      <module name="Present.sharedassets" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
