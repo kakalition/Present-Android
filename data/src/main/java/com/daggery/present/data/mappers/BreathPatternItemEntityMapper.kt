@@ -11,9 +11,9 @@ internal class BreathPatternItemEntityMapper @Inject constructor() {
             value.name,
             value.totalCount,
             value.inhaleDuration,
-            value.holdAfterInhaleDuration,
+            value.holdPostInhaleDuration,
             value.exhaleDuration,
-            value.holdAfterExhaleDuration,
+            value.holdPostExhaleDuration,
             value.repetitions
         )
     }
@@ -24,9 +24,9 @@ internal class BreathPatternItemEntityMapper @Inject constructor() {
             value.name,
             value.totalCount,
             value.inhaleDuration,
-            value.holdAfterInhaleDuration,
+            value.holdPostInhaleDuration,
             value.exhaleDuration,
-            value.holdAfterExhaleDuration,
+            value.holdPostExhaleDuration,
             value.repetitions
         )
     }
