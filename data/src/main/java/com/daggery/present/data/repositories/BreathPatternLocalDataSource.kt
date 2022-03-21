@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 class BreathPatternLocalDataSource(
 
 ) : BreathPatternRepository {
-    override suspend fun getBreathPatternItemsFlow(): Flow<List<BreathPatternItem>> {
+    override fun getBreathPatternItemsFlow(): Flow<List<BreathPatternItem>> {
         TODO("Not yet implemented")
     }
 
