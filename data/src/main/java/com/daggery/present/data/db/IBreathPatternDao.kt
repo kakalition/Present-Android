@@ -1,19 +1,19 @@
 package com.daggery.present.data.db
 
-import com.daggery.present.domain.entities.BreathPatternItem
+import com.daggery.present.data.entities.BreathPatternItemEntity
 import kotlinx.coroutines.flow.Flow
 
 internal interface IBreathPatternDao {
 
-    fun getBreathPatternItemsFlow(): Flow<List<BreathPatternItem>>
+    fun getBreathPatternItemEntitiesFlow(): Flow<List<BreathPatternItemEntity>>
 
-    suspend fun getBreathPatternItems(): List<BreathPatternItem>
+    suspend fun getBreathPatternItemEntities(): List<BreathPatternItemEntity>
 
-    suspend fun getBreathPatternItemByUuid(uuid: String): BreathPatternItem?
+    suspend fun getBreathPatternItemEntityByUuid(uuid: String): BreathPatternItemEntity?
 
-    suspend fun addBreathPattern(value: BreathPatternItem)
+    suspend fun addBreathPattern(value: BreathPatternItemEntity)
 
-    suspend fun updateBreathPattern(value: BreathPatternItem)
+    suspend fun updateBreathPattern(value: BreathPatternItemEntity)
 
-    suspend fun deleteBreathPattern(value: BreathPatternItem)
+    suspend fun deleteBreathPattern(value: BreathPatternItemEntity)
 }
