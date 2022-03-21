@@ -1,6 +1,6 @@
 package com.daggery.present.data.repositories
 
-import com.daggery.present.data.db.FakeBreathPatternDao
+import com.daggery.present.data.db.test.FakeBreathPatternDao
 import com.daggery.present.data.mappers.BreathPatternItemEntityMapper
 import com.daggery.present.domain.entities.BreathPatternItem
 import kotlinx.coroutines.ExperimentalCoroutinesApi

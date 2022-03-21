@@ -3,6 +3,7 @@ object ApplicationId {
 }
 
 object Modules {
+    const val sharedassets = ":sharedassets"
     const val app = ":app"
     const val data = ":data"
     const val domain = ":domain"
