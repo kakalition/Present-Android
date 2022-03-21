@@ -15,12 +15,12 @@ internal object BreathPatternItemEntityMapperTest : Spek({
 
         it("returns BreathPatternItemEntity") {
             val value = sut.toBreathPatternItemEntity(fakeBreathPatternItem)
-            Assertions.assertEquals(fakeBreathPatternItem, value)
+            Assertions.assertEquals(fakeBreathPatternItemEntity, value)
         }
 
         it("returns BreathPatternItem") {
             val value = sut.toBreathPatternItem(fakeBreathPatternItemEntity)
-            Assertions.assertEquals(fakeBreathPatternItemEntity, value)
+            Assertions.assertEquals(fakeBreathPatternItem, value)
         }
 
     }
