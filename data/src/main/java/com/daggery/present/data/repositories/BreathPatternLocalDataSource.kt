@@ -1,33 +1,56 @@
 package com.daggery.present.data.repositories
 
+import com.daggery.present.data.db.IBreathPatternDao
+import com.daggery.present.data.mappers.BreathPatternItemEntityMapper
 import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.domain.repositories.BreathPatternRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class BreathPatternLocalDataSource(
-
+internal class BreathPatternLocalDataSource @Inject constructor(
+    private val dao: IBreathPatternDao,
+    private val coroutineDispatcher: CoroutineDispatcher,
+    private val mapper: BreathPatternItemEntityMapper
 ) : BreathPatternRepository {
+
     override fun getBreathPatternItemsFlow(): Flow<List<BreathPatternItem>> {
-        TODO("Not yet implemented")
+        return dao.getBreathPatternItemEntitiesFlow().map { it.map { entity -> mapper.toBreathPatternItem(entity) } }
     }
 
     override suspend fun getBreathPatternItems(): List<BreathPatternItem> {
-        TODO("Not yet implemented")
+        return withContext(coroutineDispatcher) {
+            dao.getBreathPatternItemEntities().map { entity -> mapper.toBreathPatternItem(entity) }
+        }
     }
 
     override suspend fun getBreathPatternItemByUuid(uuid: String): BreathPatternItem? {
-        TODO("Not yet implemented")
+        return withContext(coroutineDispatcher) {
+            val value = dao.getBreathPatternItemEntityByUuid(uuid)
+
+            if(value == null) { null }
+            else { mapper.toBreathPatternItem(value) }
+        }
     }
 
     override suspend fun addBreathPattern(value: BreathPatternItem) {
-        TODO("Not yet implemented")
+        withContext(coroutineDispatcher) {
+            dao.addBreathPattern(mapper.toBreathPatternItemEntity(value))
+        }
     }
 
     override suspend fun updateBreathPattern(value: BreathPatternItem) {
-        TODO("Not yet implemented")
+        withContext(coroutineDispatcher) {
+            dao.updateBreathPattern(mapper.toBreathPatternItemEntity(value))
+        }
     }
 
     override suspend fun deleteBreathPattern(value: BreathPatternItem) {
-        TODO("Not yet implemented")
+        withContext(coroutineDispatcher) {
+            dao.deleteBreathPattern(mapper.toBreathPatternItemEntity(value))
+        }
     }
+
 }
