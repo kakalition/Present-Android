@@ -23,22 +23,6 @@ class RoutinePageViewModelTest : Spek({
             }
         }
 
-        describe("#addRoutine") {
-            context("calls this method with given argument") {
-                it("add given argument to database") {
-
-                }
-            }
-        }
-
-        describe("#updateRoutine") {
-            context("calls this method with given argument") {
-                it("update corresponding routine with new data") {
-
-                }
-            }
-        }
-
         describe("#deleteRoutine") {
             context("calls this method with given argument") {
                 it("delete corresponding routine with new data") {
