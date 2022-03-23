@@ -26,14 +26,6 @@ class PatternListPageViewModelTest : Spek({
             }
         }
 
-        describe("#addPattern") {
-            context("calls this method with given argument") {
-                it("add given argument to database") {
-
-                }
-            }
-        }
-
         describe("#deletePattern") {
             context("calls this method with given argument") {
                 it("delete corresponding routine with new data") {

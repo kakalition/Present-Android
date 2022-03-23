@@ -16,6 +16,14 @@ class PatternEditorSheetViewModelTest : Spek({
             }
         }
 
+        describe("#addPattern") {
+            context("calls this method with given argument") {
+                it("add given argument to database") {
+
+                }
+            }
+        }
+
         describe("#updatePattern") {
             context("calls this method with given argument") {
                 it("update corresponding routine with new data") {
