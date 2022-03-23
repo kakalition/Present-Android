@@ -1,6 +1,6 @@
-package com.daggery.present.breathpage.viewmodel.mappers
+package com.daggery.present.breathpage.mappers
 
-import com.daggery.present.breathpage.viewmodel.entities.ActiveBreathPatternItem
+import com.daggery.present.breathpage.entities.ActiveBreathPatternItem
 import com.daggery.present.domain.entities.BreathPatternItem
 
 internal class ActiveBreathPatternItemMapper {

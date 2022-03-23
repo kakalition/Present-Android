@@ -1,4 +1,4 @@
-package com.daggery.present.breathpage.viewmodel.entities
+package com.daggery.present.breathpage.entities
 
 enum class BreathStateEnum {
     INHALE,
