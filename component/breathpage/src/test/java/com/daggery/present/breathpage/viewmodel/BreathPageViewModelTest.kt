@@ -1,13 +1,12 @@
 package com.daggery.present.breathpage.viewmodel
 
-import com.daggery.present.breathpage.entities.ActiveBreathPatternItem
+import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
 import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.domain.usecases.GetBreathPatternItemByUuidUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import javax.inject.Inject
@@ -18,13 +17,32 @@ internal class BreathPageViewModelTest @Inject constructor(
 
     describe("BreathPage ViewModel Test") {
         val repository = FakeBreathPatternRepository()
+        val mapper = BreathPatternStateHolderMapper()
         val getBreathPatternItemByUuid = GetBreathPatternItemByUuidUseCase(repository)
-        val sut = BreathPageViewModel(getBreathPatternItemByUuid)
+        val sut = BreathPageViewModel(mapper, getBreathPatternItemByUuid)
+
+        val uuidOne = "1"
+        val valueOne =
+            mapper.toBreathPatternStateHolder(BreathPatternItem("1", "Pattern 1", 1, 1, 1, 1, 1, 1))
+
+        val uuidFour = "4"
 
         describe("#getBreathPatternItemStateHolder") {
-            context("calls this method") {
-                it("returns BreathPatternItemStateHolder with corresponding uuid") {
+            context("calls this method with valid uuid") {
+                it("returns BreathPatternStateHolder with corresponding uuid") {
+                    runTest {
+                        val value = sut.getBreathPatternStateHolder(uuidOne)
+                        Assertions.assertEquals(valueOne, value)
+                    }
+                }
+            }
 
+            context("calls this method with invalid uuid") {
+                it("returns null") {
+                    runTest {
+                        val value = sut.getBreathPatternStateHolder(uuidFour)
+                        Assertions.assertEquals(null, value)
+                    }
                 }
             }
         }

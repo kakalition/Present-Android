@@ -1,6 +1,6 @@
 package com.daggery.present.breathpage.viewmodel
 
-import com.daggery.present.breathpage.entities.ActiveBreathPatternItem
+import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.entities.BreathStateEnum
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class TimerEngine @Inject constructor(){
 
-    private var _breathPattern: ActiveBreathPatternItem? = null
+    private var _breathPattern: BreathPatternStateHolder? = null
     private val breathPattern get() = _breathPattern!!
 
     private var currentDuration = 0
@@ -21,7 +21,7 @@ class TimerEngine @Inject constructor(){
         action = { tickTime() }
     )
 
-    fun setBreathPattern(value: ActiveBreathPatternItem) {
+    fun setBreathPattern(value: BreathPatternStateHolder) {
         _breathPattern = value
         totalDurationMs = (value.inhaleDuration + value.holdPostInhaleDuration + value.exhaleDuration +
                 value.holdPostExhaleDuration) * value.repetitions * 1000L
@@ -39,12 +39,15 @@ class TimerEngine @Inject constructor(){
     }
 
     private fun cycleState() {
-        breathPattern.state = when(breathPattern.state) {
-            BreathStateEnum.INHALE -> BreathStateEnum.HOLD_POST_INHALE
-            BreathStateEnum.HOLD_POST_INHALE -> BreathStateEnum.EXHALE
-            BreathStateEnum.EXHALE -> BreathStateEnum.HOLD_POST_EXHALE
-            BreathStateEnum.HOLD_POST_EXHALE -> BreathStateEnum.INHALE
-        }
+        _breathPattern = breathPattern.copy(
+            state = when(breathPattern.state) {
+                BreathStateEnum.INHALE -> BreathStateEnum.HOLD_POST_INHALE
+                BreathStateEnum.HOLD_POST_INHALE -> BreathStateEnum.EXHALE
+                BreathStateEnum.EXHALE -> BreathStateEnum.HOLD_POST_EXHALE
+                BreathStateEnum.HOLD_POST_EXHALE -> BreathStateEnum.INHALE
+                else -> BreathStateEnum.FINISHED
+            }
+        )
     }
 
     private fun generateList(): List<Int> {
@@ -81,7 +84,7 @@ class TimerEngine @Inject constructor(){
 
     fun resetTimer() {
         currentDuration = 0
-        breathPattern.state = BreathStateEnum.INHALE
+        _breathPattern = breathPattern.copy(state = BreathStateEnum.INHALE)
         clockEngine.resetTimer()
     }
 

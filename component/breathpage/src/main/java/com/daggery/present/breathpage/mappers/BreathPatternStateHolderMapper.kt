@@ -1,11 +1,11 @@
 package com.daggery.present.breathpage.mappers
 
-import com.daggery.present.breathpage.entities.ActiveBreathPatternItem
+import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.domain.entities.BreathPatternItem
 
-internal class ActiveBreathPatternItemMapper {
-    fun toActiveBreathPatternItem(value: BreathPatternItem): ActiveBreathPatternItem {
-        return ActiveBreathPatternItem(
+class BreathPatternStateHolderMapper {
+    fun toBreathPatternStateHolder(value: BreathPatternItem): BreathPatternStateHolder {
+        return BreathPatternStateHolder(
             value.uuid,
             value.name,
             value.totalCount,

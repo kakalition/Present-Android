@@ -1,6 +1,6 @@
 package com.daggery.present.breathpage.entities
 
-data class ActiveBreathPatternItem(
+data class BreathPatternStateHolder(
     val uuid: String,
     val name: String,
     val totalCount: Int,
@@ -9,5 +9,5 @@ data class ActiveBreathPatternItem(
     val exhaleDuration: Int,
     val holdPostExhaleDuration: Int,
     val repetitions: Int,
-    var state: BreathStateEnum = BreathStateEnum.INHALE
+    val state: BreathStateEnum = BreathStateEnum.INHALE
 )

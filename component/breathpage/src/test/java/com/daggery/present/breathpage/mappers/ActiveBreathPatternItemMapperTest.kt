@@ -1,14 +1,14 @@
 package com.daggery.present.breathpage.mappers
 
-import com.daggery.present.breathpage.entities.ActiveBreathPatternItem
+import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.domain.entities.BreathPatternItem
 import org.junit.jupiter.api.Assertions
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
 internal class ActiveBreathPatternItemMapperTest : Spek({
-    describe("ActiveBreathPatternItem Mapper") {
-        val sut = ActiveBreathPatternItemMapper()
+    describe("BreathPatternStateHolder Mapper") {
+        val sut = BreathPatternStateHolderMapper()
         val breathPatternItem = BreathPatternItem(
             "1",
             "1",
@@ -19,7 +19,7 @@ internal class ActiveBreathPatternItemMapperTest : Spek({
             1,
             1
         )
-        val activeBreathPatternItem = ActiveBreathPatternItem(
+        val activeBreathPatternItem = BreathPatternStateHolder(
             "1",
             "1",
             1,
@@ -31,9 +31,9 @@ internal class ActiveBreathPatternItemMapperTest : Spek({
         )
 
         describe("Call toActiveBreathPatternItem()") {
-            it("returns ActiveBreathPatternItem from given BreathPatternItem") {
-                val value = sut.toActiveBreathPatternItem(breathPatternItem)
-                Assertions.assertInstanceOf(ActiveBreathPatternItem::class.java, value)
+            it("returns BreathPatternStateHolder from given BreathPatternItem") {
+                val value = sut.toBreathPatternStateHolder(breathPatternItem)
+                Assertions.assertInstanceOf(BreathPatternStateHolder::class.java, value)
                 Assertions.assertEquals(activeBreathPatternItem, value)
             }
         }
