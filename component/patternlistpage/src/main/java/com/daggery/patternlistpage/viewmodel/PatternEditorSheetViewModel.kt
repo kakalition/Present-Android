@@ -3,6 +3,6 @@ package com.daggery.patternlistpage.viewmodel
 import androidx.lifecycle.ViewModel
 import javax.inject.Inject
 
-class PatternEditorViewModel @Inject constructor() : ViewModel() {
+class PatternEditorSheetViewModel @Inject constructor() : ViewModel() {
 
 }
