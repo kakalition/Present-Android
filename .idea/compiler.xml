@@ -8,6 +8,7 @@
       <module name="Present.component.dashboard" target="11" />
       <module name="Present.component.dashboardpage" target="11" />
       <module name="Present.component.historypage" target="11" />
+      <module name="Present.component.notificationpage" target="11" />
       <module name="Present.component.patternlistpage" target="11" />
       <module name="Present.component.reminderpage" target="11" />
       <module name="Present.data" target="11" />
