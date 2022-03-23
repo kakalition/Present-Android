@@ -14,9 +14,14 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/component" />
-            <option value="$PROJECT_DIR$/component/dashboard" />
+            <option value="$PROJECT_DIR$/component/breathpage" />
+            <option value="$PROJECT_DIR$/component/dashboardpage" />
+            <option value="$PROJECT_DIR$/component/historypage" />
+            <option value="$PROJECT_DIR$/component/patternlistpage" />
+            <option value="$PROJECT_DIR$/component/reminderpage" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/sharedassets" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

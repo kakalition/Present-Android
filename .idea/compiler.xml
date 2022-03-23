@@ -4,8 +4,14 @@
     <bytecodeTargetLevel target="1.8">
       <module name="Present.app" target="11" />
       <module name="Present.buildSrc" target="11" />
+      <module name="Present.component.breathpage" target="11" />
       <module name="Present.component.dashboard" target="11" />
+      <module name="Present.component.dashboardpage" target="11" />
+      <module name="Present.component.historypage" target="11" />
+      <module name="Present.component.patternlistpage" target="11" />
+      <module name="Present.component.reminderpage" target="11" />
       <module name="Present.data" target="11" />
+      <module name="Present.sharedassets" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
