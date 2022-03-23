@@ -19,38 +19,46 @@ internal class BreathPageViewModelTest @Inject constructor(
     describe("BreathPage ViewModel Test") {
         val repository = FakeBreathPatternRepository()
         val getBreathPatternItemByUuid = GetBreathPatternItemByUuidUseCase(repository)
-        val timerEngine = TimerEngine()
-        val sut = BreathPageViewModel(timerEngine, getBreathPatternItemByUuid)
-        val item = ActiveBreathPatternItem("1", "1", 1, 4, 4, 4, 4, 1)
+        val sut = BreathPageViewModel(getBreathPatternItemByUuid)
 
-        val idOne = "1"
-        val valueOne = BreathPatternItem("1", "Pattern 1", 1, 1, 1, 1, 1, 1)
+        describe("#getBreathPatternItemStateHolder") {
+            context("calls this method") {
+                it("returns BreathPatternItemStateHolder with corresponding uuid") {
 
-        describe("call getBreathPatternByUuid UseCase") {
-            it("returns BreathPatternItem with corresponding uuid") {
-                runBlocking {
-                    timerEngine.setBreathPattern(item)
-                    launch {
-                        timerEngine.startTimer()
-                    }
-                    launch {
-                        delay(2000)
-                        println("pause")
-                        timerEngine.pauseTimer()
-                    }
-                    launch {
-                        delay(4000)
-                        println("resume")
-                        timerEngine.resumeTimer()
-                    }
-                    launch {
-                        delay(6000)
-                        println("reset")
-                        timerEngine.resetTimer()
-                    }
                 }
             }
         }
+
+        describe("#startSession") {
+            context("calls this method") {
+                it("starts session timer") {
+
+                }
+            }
+
+            context("timer goes off") {
+                it("change state to done") {
+
+                }
+            }
+        }
+
+        describe("#pauseSession") {
+            context("calls this method") {
+                it("pause session timer") {
+
+                }
+            }
+        }
+
+        describe("#resetSession") {
+            context("calls this method") {
+                it("reset timer to ground state") {
+
+                }
+            }
+        }
+
     }
 
 })
