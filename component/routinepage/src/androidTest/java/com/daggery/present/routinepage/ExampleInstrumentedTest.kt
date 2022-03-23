@@ -1,4 +1,4 @@
-package com.daggery.present.reminderpage
+package com.daggery.present.routinepage
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
