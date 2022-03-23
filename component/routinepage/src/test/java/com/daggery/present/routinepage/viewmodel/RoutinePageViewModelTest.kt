@@ -3,13 +3,13 @@ package com.daggery.present.routinepage.viewmodel
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 
-class ReminderPageViewModelTest : Spek({
-    describe("ReminderPage ViewModel Test") {
+class RoutinePageViewModelTest : Spek({
+    describe("RoutinePage ViewModel Test") {
         val sut = BreathPageViewModel()
 
-        describe("#getAllRoutine") {
+        describe("#getAllRoutines") {
             context("calls this method") {
-                it("returns all routine") { // TODO: Create this dataclass
+                it("returns all routines") { // TODO: Create this dataclass
 
                 }
             }
