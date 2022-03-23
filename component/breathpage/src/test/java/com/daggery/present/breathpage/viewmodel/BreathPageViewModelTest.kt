@@ -31,7 +31,8 @@ internal class BreathPageViewModelTest @Inject constructor(
             context("calls this method with valid uuid") {
                 it("returns BreathPatternStateHolder with corresponding uuid") {
                     runTest {
-                        val value = sut.getBreathPatternStateHolder(uuidOne)
+                        sut.getBreathPatternStateHolder(uuidOne)
+                        val value = sut.breathPatternStateHolder
                         Assertions.assertEquals(valueOne, value)
                     }
                 }
@@ -40,7 +41,8 @@ internal class BreathPageViewModelTest @Inject constructor(
             context("calls this method with invalid uuid") {
                 it("returns null") {
                     runTest {
-                        val value = sut.getBreathPatternStateHolder(uuidFour)
+                        sut.getBreathPatternStateHolder(uuidFour)
+                        val value = sut.breathPatternStateHolder
                         Assertions.assertEquals(null, value)
                     }
                 }
@@ -76,7 +78,5 @@ internal class BreathPageViewModelTest @Inject constructor(
                 }
             }
         }
-
     }
-
 })
