@@ -5,6 +5,9 @@ import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.domain.usecases.GetBreathPatternItemByUuidUseCase
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 class BreathPageViewModel @Inject constructor(
@@ -16,16 +19,22 @@ class BreathPageViewModel @Inject constructor(
     val breathPatternStateHolder get() = _breathPatternStateHolder!!
 
     private lateinit var timerEngine: TimerEngine
+    lateinit var timerState: StateFlow<TimerState>
+    var totalDuration = 1
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
         if(_breathPatternStateHolder != null) {
             timerEngine = TimerEngine(breathPatternStateHolder)
+            timerState = timerEngine.timerState
+            totalDuration = with(breathPatternStateHolder) {
+                return@with (inhaleDuration + holdPostInhaleDuration + exhaleDuration + holdPostExhaleDuration) * repetitions
+            }
         }
     }
 
     suspend fun startSession() {
-
+        timerEngine.startTimer()
     }
 
     suspend fun pauseSession() {

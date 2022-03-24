@@ -3,35 +3,41 @@ package com.daggery.present.breathpage.viewmodel
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.entities.BreathStateEnum
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-// TODO: SUBJECT TO CHANGE
+data class TimerState(
+    val currentDuration: Int,
+    val currentState: BreathStateEnum
+)
 
 class TimerEngine @Inject constructor(
     private var breathPattern: BreathPatternStateHolder
 ){
 
-    private var currentDuration = 0
+    private var _timerState = MutableStateFlow(TimerState(1, BreathStateEnum.INHALE))
+    val timerState = _timerState.asStateFlow()
+
+    private var currentDuration = 1
     private val totalDuration = with(breathPattern) {
         return@with (inhaleDuration + holdPostInhaleDuration + exhaleDuration + holdPostExhaleDuration) * repetitions
     }
-    private var stateSequence = listOf<Int>()
+    private var stateSequence = generateList()
 
     private var clockEngine = ClockEngine(
         totalDurationMs = totalDuration * 1000,
         action = { tickTime() }
     )
 
-    private fun cycleState() {
-        breathPattern = breathPattern.copy(
-            state = when(breathPattern.state) {
-                BreathStateEnum.INHALE -> BreathStateEnum.HOLD_POST_INHALE
-                BreathStateEnum.HOLD_POST_INHALE -> BreathStateEnum.EXHALE
-                BreathStateEnum.EXHALE -> BreathStateEnum.HOLD_POST_EXHALE
-                BreathStateEnum.HOLD_POST_EXHALE -> BreathStateEnum.INHALE
-                else -> BreathStateEnum.FINISHED
-            }
-        )
+    private fun cycleState(breathStateEnum: BreathStateEnum): BreathStateEnum {
+        return when(breathStateEnum) {
+            BreathStateEnum.INHALE -> BreathStateEnum.HOLD_POST_INHALE
+            BreathStateEnum.HOLD_POST_INHALE -> BreathStateEnum.EXHALE
+            BreathStateEnum.EXHALE -> BreathStateEnum.HOLD_POST_EXHALE
+            BreathStateEnum.HOLD_POST_EXHALE -> BreathStateEnum.INHALE
+            else -> BreathStateEnum.FINISHED
+        }
     }
 
     private fun generateList(): List<Int> {
@@ -50,25 +56,32 @@ class TimerEngine @Inject constructor(
         return value
     }
 
-    private fun tickTime() {
-        println("State: ${breathPattern.state} | Duration: ${currentDuration + 1}")
+    private suspend fun tickTime() {
         currentDuration++
+        var currentState = timerState.value.currentState
         if(stateSequence.contains(currentDuration)) {
-            cycleState()
+            currentState = cycleState(currentState)
         }
+
+        _timerState.emit(timerState.value.copy(
+            currentDuration = currentDuration,
+            currentState = currentState
+        ))
     }
 
     suspend fun startTimer() {
-        clockEngine.startTimer()
+        return clockEngine.startTimer()
     }
 
     fun stopTimer() {
         clockEngine.stopTimer()
     }
 
-    fun resetTimer() {
-        currentDuration = 0
-        breathPattern = breathPattern.copy(state = BreathStateEnum.INHALE)
+    suspend fun resetTimer() {
+        _timerState.emit(timerState.value.copy(
+            currentDuration = 0,
+            currentState = BreathStateEnum.INHALE)
+        )
         clockEngine.resetTimer()
     }
 
@@ -77,7 +90,7 @@ class TimerEngine @Inject constructor(
 
 private class ClockEngine(
     private val totalDurationMs: Int,
-    private val action: () -> Unit,
+    private val action: suspend () -> Unit,
 ) {
 
     private var currentTimeMs = 0L
