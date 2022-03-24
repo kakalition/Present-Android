@@ -19,7 +19,15 @@ class BreathPageViewModel @Inject constructor(
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
     }
 
-    suspend fun startsSession() {
+    suspend fun startSession() {
+
+    }
+
+    suspend fun pauseSession() {
+
+    }
+
+    suspend fun resetSession() {
 
     }
 
