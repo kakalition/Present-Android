@@ -7,39 +7,23 @@ import javax.inject.Inject
 
 // TODO: SUBJECT TO CHANGE
 
-class TimerEngine @Inject constructor(){
-
-    private var _breathPattern: BreathPatternStateHolder? = null
-    private val breathPattern get() = _breathPattern!!
+class TimerEngine @Inject constructor(
+    private var breathPattern: BreathPatternStateHolder
+){
 
     private var currentDuration = 0
-    private var totalDurationMs = 0L
+    private val totalDuration = with(breathPattern) {
+        return@with (inhaleDuration + holdPostInhaleDuration + exhaleDuration + holdPostExhaleDuration) * repetitions
+    }
     private var stateSequence = listOf<Int>()
 
     private var clockEngine = ClockEngine(
-        resetTimerAction = { resetTimer() },
+        totalDurationMs = totalDuration * 1000,
         action = { tickTime() }
     )
 
-    fun setBreathPattern(value: BreathPatternStateHolder) {
-        _breathPattern = value
-        totalDurationMs = (value.inhaleDuration + value.holdPostInhaleDuration + value.exhaleDuration +
-                value.holdPostExhaleDuration) * value.repetitions * 1000L
-        stateSequence = generateList()
-        clockEngine.setTotalDurationMs(totalDurationMs)
-    }
-
-    fun removeBreathPattern() {
-        _breathPattern = null
-        totalDurationMs = 0
-    }
-
-    suspend fun startTimer() {
-        clockEngine.startTimer()
-    }
-
     private fun cycleState() {
-        _breathPattern = breathPattern.copy(
+        breathPattern = breathPattern.copy(
             state = when(breathPattern.state) {
                 BreathStateEnum.INHALE -> BreathStateEnum.HOLD_POST_INHALE
                 BreathStateEnum.HOLD_POST_INHALE -> BreathStateEnum.EXHALE
@@ -53,7 +37,7 @@ class TimerEngine @Inject constructor(){
     private fun generateList(): List<Int> {
         var currentDuration = 0
         val value = mutableListOf<Int>()
-        while(currentDuration != (totalDurationMs/1000).toInt()){
+        while (currentDuration != (totalDuration)) {
             currentDuration += breathPattern.inhaleDuration
             value.add(currentDuration)
             currentDuration += breathPattern.holdPostInhaleDuration
@@ -74,17 +58,17 @@ class TimerEngine @Inject constructor(){
         }
     }
 
-    fun pauseTimer() {
-        clockEngine.pauseTimer()
+    suspend fun startTimer() {
+        clockEngine.startTimer()
     }
 
-    suspend fun resumeTimer() {
-        clockEngine.resumeTimer()
+    fun stopTimer() {
+        clockEngine.stopTimer()
     }
 
     fun resetTimer() {
         currentDuration = 0
-        _breathPattern = breathPattern.copy(state = BreathStateEnum.INHALE)
+        breathPattern = breathPattern.copy(state = BreathStateEnum.INHALE)
         clockEngine.resetTimer()
     }
 
@@ -92,34 +76,26 @@ class TimerEngine @Inject constructor(){
 }
 
 private class ClockEngine(
-    private val resetTimerAction: () -> Unit,
+    private val totalDurationMs: Int,
     private val action: () -> Unit,
 ) {
 
-    private var _totalDurationMs: Long? = null
-    private val totalDurationMs get() = _totalDurationMs!!
-    private var currentTime = 0L
+    private var currentTimeMs = 0L
 
     private var secondIndicator = 0
     private val secondFullIndicator = 10
 
-    private var requestPause = false
-
-    fun setTotalDurationMs(value: Long) {
-        _totalDurationMs = value
-    }
+    private var requestStop = false
 
     suspend fun startTimer() {
-        while(currentTime <= totalDurationMs) {
-
-            if(requestPause) {
-                requestPause = false
+        while(currentTimeMs <= totalDurationMs) {
+            if(requestStop) {
+                requestStop = false
                 break
             }
 
             delay(100)
-            currentTime += 100
-
+            currentTimeMs += 100
             secondIndicator += 1
 
             if(secondIndicator == secondFullIndicator) {
@@ -129,16 +105,12 @@ private class ClockEngine(
         }
     }
 
-    fun pauseTimer() {
-        requestPause = true
-    }
-
-    suspend fun resumeTimer() {
-        startTimer()
+    fun stopTimer() {
+        requestStop = true
     }
 
     fun resetTimer() {
-        currentTime = 0L
-        pauseTimer()
+        currentTimeMs = 0L
+        stopTimer()
     }
 }

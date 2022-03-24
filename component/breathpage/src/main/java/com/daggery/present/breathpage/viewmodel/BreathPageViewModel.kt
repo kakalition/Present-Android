@@ -13,10 +13,15 @@ class BreathPageViewModel @Inject constructor(
 ): ViewModel() {
 
     private var _breathPatternStateHolder: BreathPatternStateHolder? = null
-    val breathPatternStateHolder get() = _breathPatternStateHolder
+    val breathPatternStateHolder get() = _breathPatternStateHolder!!
+
+    private lateinit var timerEngine: TimerEngine
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
+        if(_breathPatternStateHolder != null) {
+            timerEngine = TimerEngine(breathPatternStateHolder)
+        }
     }
 
     suspend fun startSession() {
