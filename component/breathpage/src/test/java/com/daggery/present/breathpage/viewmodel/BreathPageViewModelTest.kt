@@ -56,8 +56,7 @@ internal class BreathPageViewModelTest @Inject constructor(
                 it("returns null") {
                     runTest {
                         sut.getBreathPatternStateHolder(uuidFour)
-                        val value: BreathPatternStateHolder?
-                        value = try {
+                        val value: BreathPatternStateHolder? = try {
                             sut.breathPatternStateHolder
                         } catch(e: Exception) {
                             null

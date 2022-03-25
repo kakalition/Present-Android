@@ -2,7 +2,6 @@ package com.daggery.present.breathpage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
-import com.daggery.present.breathpage.entities.BreathStateEnum
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.domain.usecases.GetBreathPatternItemByUuidUseCase
 import kotlinx.coroutines.flow.StateFlow
