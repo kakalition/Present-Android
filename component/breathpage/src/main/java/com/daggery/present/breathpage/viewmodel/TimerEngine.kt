@@ -27,16 +27,37 @@ class TimerEngine @Inject constructor(
                 ).times(repetitions)
             .plus(3)
     }
+
     private val clockEngine = ClockEngine(
         totalDurationMs = totalDuration * 1000,
         action = { tickTime() }
     )
 
+    suspend fun startTimer() {
+        clockEngine.startTimer()
+        // Emit BreathStateEnum.FINISHED to indicate timer has reached end.
+        _timerState.emit(timerState.value.copy(
+            currentDuration = 0,
+            currentState = BreathStateEnum.FINISHED
+        ))
+    }
+
+    fun stopTimer() {
+        clockEngine.stopTimer()
+    }
+
+    suspend fun resetTimer() {
+        _timerState.emit(timerState.value.copy(
+            currentDuration = 0,
+            currentState = BreathStateEnum.GROUND)
+        )
+        clockEngine.resetTimer()
+    }
+
     private fun cycleTimerState(value: TimerState): TimerState {
         return when {
             value.currentState == BreathStateEnum.GROUND -> {
                 value.copy(currentDuration = 3, currentState = BreathStateEnum.READY)
-
             }
             value.currentState == BreathStateEnum.READY && value.currentDuration == 3 -> {
                 value.copy(currentState = BreathStateEnum.READY)
@@ -80,34 +101,8 @@ class TimerEngine @Inject constructor(
 
     private suspend fun tickTime() {
         val currentDuration = timerState.value.currentDuration - 1
-/*
-        var currentTimerState = timerState.value.copy(currentDuration = currentDuration)
-        if (stateSequence.contains(currentDuration)) {
-            currentTimerState = cycleTimerState(currentTimerState)
-        }
-*/
         val currentTimerState = cycleTimerState(timerState.value.copy(currentDuration = currentDuration))
         _timerState.emit(currentTimerState)
-    }
-
-    suspend fun startTimer() {
-        clockEngine.startTimer()
-        _timerState.emit(timerState.value.copy(
-            currentDuration = 0,
-            currentState = BreathStateEnum.FINISHED
-        ))
-    }
-
-    fun stopTimer() {
-        clockEngine.stopTimer()
-    }
-
-    suspend fun resetTimer() {
-        _timerState.emit(timerState.value.copy(
-            currentDuration = 0,
-            currentState = BreathStateEnum.INHALE)
-        )
-        clockEngine.resetTimer()
     }
 
 }

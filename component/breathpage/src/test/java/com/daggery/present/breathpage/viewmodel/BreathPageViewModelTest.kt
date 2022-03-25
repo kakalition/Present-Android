@@ -99,17 +99,12 @@ internal class BreathPageViewModelTest @Inject constructor(
                             sut.timerState.collect {
                                 ensureActive()
                                 value.add(it)
-
-                                // + 1 for last emit
-                                if (it.currentDuration >= sut.totalDuration + 2) {
-                                    this.cancel()
-                                }
+                                println(it)
+                                if(it.currentState == BreathStateEnum.FINISHED) this.cancel()
                             }
                         }
 
-                        launch {
-                            sut.startSession()
-                        }
+                        sut.startSession()
 
                         job.join()
 
