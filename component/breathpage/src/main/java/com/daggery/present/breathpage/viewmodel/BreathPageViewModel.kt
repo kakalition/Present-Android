@@ -2,11 +2,9 @@ package com.daggery.present.breathpage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
+import com.daggery.present.breathpage.entities.BreathStateEnum
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
-import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.domain.usecases.GetBreathPatternItemByUuidUseCase
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -20,7 +18,7 @@ class BreathPageViewModel @Inject constructor(
 
     private lateinit var timerEngine: TimerEngine
     lateinit var timerState: StateFlow<TimerState>
-    var totalDuration = 1
+    private var totalDuration = 1
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
@@ -34,16 +32,14 @@ class BreathPageViewModel @Inject constructor(
     }
 
     suspend fun startSession() {
-        println("calls st")
         timerEngine.startTimer()
     }
 
-    suspend fun pauseSession() {
-
+    fun stopSession() {
+        timerEngine.stopTimer()
     }
 
     suspend fun resetSession() {
-
+        timerEngine.resetTimer()
     }
-
 }

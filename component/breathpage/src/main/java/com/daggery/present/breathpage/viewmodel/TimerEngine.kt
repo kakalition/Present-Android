@@ -34,12 +34,15 @@ class TimerEngine @Inject constructor(
     )
 
     suspend fun startTimer() {
-        clockEngine.startTimer()
+        val isReset = clockEngine.startTimer()
+
         // Emit BreathStateEnum.FINISHED to indicate timer has reached end.
-        _timerState.emit(timerState.value.copy(
-            currentDuration = 0,
-            currentState = BreathStateEnum.FINISHED
-        ))
+        if(!isReset) {
+            _timerState.emit(timerState.value.copy(
+                currentDuration = 0,
+                currentState = BreathStateEnum.FINISHED
+            ))
+        }
     }
 
     fun stopTimer() {
@@ -118,11 +121,17 @@ private class ClockEngine(
     private val secondFullIndicator = 10
 
     private var requestStop = false
+    private var requestReset = false
 
-    suspend fun startTimer() {
-        while(currentTimeMs <= totalDurationMs) {
-            if(requestStop) {
+    // If reset timer return true, else false
+    suspend fun startTimer(): Boolean {
+        while (currentTimeMs <= totalDurationMs) {
+            if (requestStop) {
                 requestStop = false
+                break
+            } else if (requestReset) {
+                requestReset = false
+                currentTimeMs = 0L
                 break
             }
 
@@ -130,11 +139,12 @@ private class ClockEngine(
             currentTimeMs += 100
             secondIndicator += 1
 
-            if(secondIndicator == secondFullIndicator) {
+            if (secondIndicator == secondFullIndicator) {
                 action()
                 secondIndicator = 0
             }
         }
+        return currentTimeMs == 0L
     }
 
     fun stopTimer() {
@@ -142,7 +152,6 @@ private class ClockEngine(
     }
 
     fun resetTimer() {
-        currentTimeMs = 0L
-        stopTimer()
+        requestReset = true
     }
 }
