@@ -34,6 +34,7 @@ class BreathPageViewModel @Inject constructor(
     }
 
     suspend fun startSession() {
+        println("calls st")
         timerEngine.startTimer()
     }
 

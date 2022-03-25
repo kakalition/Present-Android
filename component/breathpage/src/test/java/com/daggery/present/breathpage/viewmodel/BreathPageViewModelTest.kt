@@ -1,10 +1,15 @@
 package com.daggery.present.breathpage.viewmodel
 
+import com.daggery.present.breathpage.entities.BreathStateEnum
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
 import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.domain.usecases.GetBreathPatternItemByUuidUseCase
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.spekframework.spek2.Spek
@@ -24,12 +29,23 @@ internal class BreathPageViewModelTest @Inject constructor(
         val uuidOne = "1"
         val valueOne =
             mapper.toBreathPatternStateHolder(BreathPatternItem("1", "Pattern 1", 1, 2, 2, 2, 2, 1))
+/*
+        1 ground
+        3 ready
+        1 inhale
+        1 post inhale
+        1 exhale
+        1 post exhale
+        1 finished
+*/
+        val totalValueOneEmit = 9
 
         val uuidFour = "4"
 
         describe("#getBreathPatternItemStateHolder") {
             context("calls this method with valid uuid") {
                 it("returns BreathPatternStateHolder with corresponding uuid") {
+                    println("")
                     runTest {
                         sut.getBreathPatternStateHolder(uuidOne)
                         val value = sut.breathPatternStateHolder
@@ -52,7 +68,7 @@ internal class BreathPageViewModelTest @Inject constructor(
         describe("#startSession") {
             context("calls this method") {
                 it("starts session timer") {
-                    runBlocking {
+                    runTest {
                         sut.getBreathPatternStateHolder(uuidOne)
                         val value = mutableListOf<TimerState>()
 
@@ -60,23 +76,46 @@ internal class BreathPageViewModelTest @Inject constructor(
                             sut.timerState.collect {
                                 ensureActive()
                                 value.add(it)
-                                if (sut.totalDuration == it.currentDuration) {
-                                    this.cancel()
-                                }
+                                println(it)
+                                if(it.currentState == BreathStateEnum.FINISHED) this.cancel()
                             }
                         }
-                        launch {
-                            sut.startSession()
-                        }
+
+                        sut.startSession()
+
                         job.join()
-                        Assertions.assertEquals(4, value.size)
+                        Assertions.assertEquals(totalValueOneEmit, value.size)
                     }
                 }
             }
 
             context("timer goes off") {
                 it("change state to done") {
+                    runTest {
+                        sut.getBreathPatternStateHolder(uuidOne)
+                        val value = mutableListOf<TimerState>()
 
+                        val job = launch {
+                            sut.timerState.collect {
+                                ensureActive()
+                                value.add(it)
+
+                                // + 1 for last emit
+                                if (it.currentDuration >= sut.totalDuration + 2) {
+                                    this.cancel()
+                                }
+                            }
+                        }
+
+                        launch {
+                            sut.startSession()
+                        }
+
+                        job.join()
+
+                        // Original emit is 4, with last emit is 5
+                        Assertions.assertEquals(TimerState(0, BreathStateEnum.FINISHED), value.last())
+                    }
                 }
             }
         }

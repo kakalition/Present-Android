@@ -16,61 +16,86 @@ class TimerEngine @Inject constructor(
     private var breathPattern: BreathPatternStateHolder
 ){
 
-    private var _timerState = MutableStateFlow(TimerState(1, BreathStateEnum.INHALE))
+    private var _timerState = MutableStateFlow(TimerState(0, BreathStateEnum.GROUND))
     val timerState = _timerState.asStateFlow()
 
-    private var currentDuration = 1
     private val totalDuration = with(breathPattern) {
-        return@with (inhaleDuration + holdPostInhaleDuration + exhaleDuration + holdPostExhaleDuration) * repetitions
+        return@with (inhaleDuration +
+                holdPostInhaleDuration +
+                exhaleDuration +
+                holdPostExhaleDuration
+                ).times(repetitions)
+            .plus(3)
     }
-    private var stateSequence = generateList()
-
-    private var clockEngine = ClockEngine(
+    private val clockEngine = ClockEngine(
         totalDurationMs = totalDuration * 1000,
         action = { tickTime() }
     )
 
-    private fun cycleState(breathStateEnum: BreathStateEnum): BreathStateEnum {
-        return when(breathStateEnum) {
-            BreathStateEnum.INHALE -> BreathStateEnum.HOLD_POST_INHALE
-            BreathStateEnum.HOLD_POST_INHALE -> BreathStateEnum.EXHALE
-            BreathStateEnum.EXHALE -> BreathStateEnum.HOLD_POST_EXHALE
-            BreathStateEnum.HOLD_POST_EXHALE -> BreathStateEnum.INHALE
-            else -> BreathStateEnum.FINISHED
-        }
-    }
+    private fun cycleTimerState(value: TimerState): TimerState {
+        return when {
+            value.currentState == BreathStateEnum.GROUND -> {
+                value.copy(currentDuration = 3, currentState = BreathStateEnum.READY)
 
-    private fun generateList(): List<Int> {
-        var currentDuration = 0
-        val value = mutableListOf<Int>()
-        while (currentDuration != (totalDuration)) {
-            currentDuration += breathPattern.inhaleDuration
-            value.add(currentDuration)
-            currentDuration += breathPattern.holdPostInhaleDuration
-            value.add(currentDuration)
-            currentDuration += breathPattern.exhaleDuration
-            value.add(currentDuration)
-            currentDuration += breathPattern.holdPostExhaleDuration
-            value.add(currentDuration)
+            }
+            value.currentState == BreathStateEnum.READY && value.currentDuration == 3 -> {
+                value.copy(currentState = BreathStateEnum.READY)
+            }
+            value.currentState == BreathStateEnum.READY && value.currentDuration == 2 -> {
+                value.copy(currentState = BreathStateEnum.READY)
+            }
+            value.currentState == BreathStateEnum.READY && value.currentDuration == 1 -> {
+                value.copy(currentState = BreathStateEnum.READY)
+            }
+            value.currentState == BreathStateEnum.READY && value.currentDuration == 0 -> {
+                value.copy(currentDuration = breathPattern.inhaleDuration, currentState = BreathStateEnum.INHALE)
+            }
+            value.currentState == BreathStateEnum.INHALE && value.currentDuration == 0 -> {
+                value.copy(
+                    currentDuration = breathPattern.holdPostInhaleDuration,
+                    currentState = BreathStateEnum.HOLD_POST_INHALE
+                )
+            }
+            value.currentState == BreathStateEnum.HOLD_POST_INHALE && value.currentDuration == 0 -> {
+                value.copy(
+                    currentDuration = breathPattern.exhaleDuration,
+                    currentState = BreathStateEnum.EXHALE
+                )
+            }
+            value.currentState == BreathStateEnum.EXHALE && value.currentDuration == 0 -> {
+                value.copy(
+                    currentDuration = breathPattern.holdPostExhaleDuration,
+                    currentState = BreathStateEnum.HOLD_POST_EXHALE
+                )
+            }
+            value.currentState == BreathStateEnum.HOLD_POST_EXHALE && value.currentDuration == 0 -> {
+                value.copy(
+                    currentDuration = breathPattern.inhaleDuration,
+                    currentState = BreathStateEnum.INHALE
+                )
+            }
+            else -> { value }
         }
-        return value
     }
 
     private suspend fun tickTime() {
-        currentDuration++
-        var currentState = timerState.value.currentState
-        if(stateSequence.contains(currentDuration)) {
-            currentState = cycleState(currentState)
+        val currentDuration = timerState.value.currentDuration - 1
+/*
+        var currentTimerState = timerState.value.copy(currentDuration = currentDuration)
+        if (stateSequence.contains(currentDuration)) {
+            currentTimerState = cycleTimerState(currentTimerState)
         }
-
-        _timerState.emit(timerState.value.copy(
-            currentDuration = currentDuration,
-            currentState = currentState
-        ))
+*/
+        val currentTimerState = cycleTimerState(timerState.value.copy(currentDuration = currentDuration))
+        _timerState.emit(currentTimerState)
     }
 
     suspend fun startTimer() {
-        return clockEngine.startTimer()
+        clockEngine.startTimer()
+        _timerState.emit(timerState.value.copy(
+            currentDuration = 0,
+            currentState = BreathStateEnum.FINISHED
+        ))
     }
 
     fun stopTimer() {
@@ -84,7 +109,6 @@ class TimerEngine @Inject constructor(
         )
         clockEngine.resetTimer()
     }
-
 
 }
 
