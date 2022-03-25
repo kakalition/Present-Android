@@ -106,12 +106,6 @@ fun Project.addArchTesting() {
     }
 }
 
-fun Project.addTestJunit() {
-    dependencies {
-        add("testImplementation", TestLibraries.androidJunitKtx)
-    }
-}
-
 fun Project.addJunit() {
     dependencies {
         add("testImplementation", TestLibraries.junit)
@@ -130,15 +124,23 @@ fun Project.addRobolectric() {
     }
 }
 
-fun Project.addEspresso() {
+fun Project.addCommonEspresso() {
     dependencies {
         add("androidTestImplementation", AndroidTestLibraries.espressoCore)
+        add("androidTestImplementation", AndroidTestLibraries.espressoContrib)
+        add("androidTestImplementation", AndroidTestLibraries.espressoIdlingConcurrent)
     }
 }
 
-fun Project.addAndroidTestJunit() {
+fun Project.addAndroidTestCore() {
     dependencies {
+        add("androidTestImplementation", AndroidTestLibraries.androidTestCore)
+        add("androidTestImplementation", AndroidTestLibraries.androidTestCoreKtx)
+        add("androidTestImplementation", AndroidTestLibraries.androidJunitRunner)
+        add("androidTestImplementation", AndroidTestLibraries.androidJunitRules)
         add("androidTestImplementation", AndroidTestLibraries.androidJunit)
+        add("androidTestImplementation", AndroidTestLibraries.androidTestCoreKtx)
+        add("debugImplementation", AndroidTestLibraries.fragmentTesting)
     }
 }
 

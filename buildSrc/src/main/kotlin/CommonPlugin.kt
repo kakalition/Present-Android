@@ -50,7 +50,8 @@ class CommonPlugin : Plugin<Project> {
 
                     addJunit5()
                     addSpek()
-                    addEspresso()
+                    addAndroidTestCore()
+                    addCommonEspresso()
                 }
 
                 project.dependencies {

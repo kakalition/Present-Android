@@ -18,8 +18,9 @@ object Version {
     const val kotlinVersion = "1.6.10"
     const val spek = "2.0.18"
     const val activityKtx = "1.4.0"
+    const val androidTestCore = "1.4.0"
     const val fragmentKtx = "1.4.0"
-    const val androidJunit = "3.4.0"
+    const val androidJunit = "1.1.3"
     const val androidJunitKtx = "1.1.3"
     const val appCompat = "1.4.1"
     const val archCoreCommon = "2.1.0"
@@ -29,7 +30,8 @@ object Version {
     const val constraintLayout = "2.1.3"
     const val coreKtx = "1.7.0"
     const val coroutineCore = "1.6.0"
-    const val espressoCore = "1.1.3"
+    const val espressoVersion = "3.4.0"
+    const val fragmentVersion = "1.4.1"
     const val hiltAndroid = "2.39"
     const val hiltAndroidCompilerKapt = "2.39"
     const val junit = "4.13.2"
@@ -40,7 +42,6 @@ object Version {
     const val lifecycleViewModelKtx = "2.4.1"
     const val materialDesign = "1.5.0"
     const val minSdkVersion = 26
-    const val mockitoCore = "4.2.0"
     const val navigationFragmentKtx = "2.4.1"
     const val navigationUi = "2.4.1"
     const val preferencesDataStore = "1.0.0"
@@ -51,6 +52,8 @@ object Version {
     const val roomRuntime = "2.4.1"
     const val splashScreen = "1.0.0-beta01"
     const val targetSdkVersion = 31
+    const val testRulesVersion = "1.4.0"
+    const val testRunnerVersion = "1.4.0"
 }
 
 object Libraries {
@@ -84,7 +87,6 @@ object AndroidLibraries {
 }
 
 object TestLibraries {
-    const val androidJunitKtx = "androidx.test.ext:junit-ktx:${Version.androidJunitKtx}"
     const val archCoreCommon = "androidx.arch.core:core-common:${Version.archCoreCommon}"
     const val archCoreRuntime = "androidx.arch.core:core-runtime:${Version.archCoreRuntime}"
     const val archCoreTesting = "androidx.arch.core:core-testing:${Version.archCoreTesting}"
@@ -97,7 +99,17 @@ object TestLibraries {
 }
 
 object AndroidTestLibraries {
-    const val androidJunit = "androidx.test.espresso:espresso-core:${Version.androidJunit}"
-    const val espressoCore = "androidx.test.ext:junit:${Version.espressoCore}"
-    const val mockitoCore = "org.mockito:mockito-core:${Version.mockitoCore}"
+    const val androidTestCore = "androidx.test:core:${Version.androidTestCore}"
+    const val androidTestCoreKtx ="androidx.test:core-ktx:${Version.androidTestCore}"
+    const val androidJunit = "androidx.test.ext:junit:${Version.androidJunit}"
+    const val androidJunitKtx = "androidx.test.ext:junit-ktx:${Version.androidJunitKtx}"
+    const val androidJunitRunner = "androidx.test:runner:${Version.testRunnerVersion}"
+    const val androidJunitRules = "androidx.test:rules:${Version.testRulesVersion}"
+    const val espressoCore = "androidx.test.espresso:espresso-core:${Version.espressoVersion}"
+    const val espressoContrib = "androidx.test.espresso:espresso-contrib:${Version.espressoVersion}"
+    const val espressoIntent = "androidx.test.espresso:espresso-intents:${Version.espressoVersion}"
+    const val espressoAccessibility = "androidx.test.espresso:espresso-accessibility:${Version.espressoVersion}"
+    const val espressoIdlingConcurrent = "androidx.test.espresso.idling:idling-concurrent:${Version.espressoVersion}"
+    const val espressoIdlingResource = "androidx.test.espresso:espresso-idling-resource:${Version.espressoVersion}"
+    const val fragmentTesting = "androidx.fragment:fragment-testing:${Version.fragmentVersion}"
 }
