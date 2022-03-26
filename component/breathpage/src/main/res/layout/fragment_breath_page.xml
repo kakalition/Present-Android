@@ -8,6 +8,7 @@
     tools:context=".view.BreathPageFragment">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/breath_page_app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
@@ -16,13 +17,100 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/breath_page_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:navigationIcon="@drawable/ic_back"
             app:titleCentered="true"
+            app:titleTextAppearance="@style/ToolbarTitleText"
             app:titleTextColor="@color/white"
             tools:title="Box Breathing" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <FrameLayout
+        android:id="@+id/play_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/shape_circle"
+        android:backgroundTint="@color/white">
+
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/ic_play"
+            app:tint="@color/black"
+            tools:visibility="gone"
+            android:contentDescription="play button" />
+
+        <TextView
+            android:id="@+id/time_counter"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="22dp"
+            android:layout_marginTop="22dp"
+            android:fontFamily="@font/poppins_light"
+            android:textAppearance="?attr/textAppearanceHeadline2"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toBottomOf="@id/play_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="4" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/current_state_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="22dp"
+        android:layout_marginTop="22dp"
+        android:fontFamily="@font/poppins_semi_bold"
+        android:textAppearance="?attr/textAppearanceHeadline4"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/play_bg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Start" />
+
+    <FrameLayout
+        android:id="@+id/restart_button"
+        app:layout_constraintBottom_toTopOf="@id/next_state_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="22dp"
+        android:background="@drawable/shape_circle"
+        android:backgroundTint="@color/white">
+
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_restart"
+            app:tint="@color/black"
+            android:contentDescription="restart button" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/next_state_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="22dp"
+        android:fontFamily="@font/poppins_medium"
+        android:textAppearance="?attr/textAppearanceTitleSmall"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Next: Inhale (4)" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
