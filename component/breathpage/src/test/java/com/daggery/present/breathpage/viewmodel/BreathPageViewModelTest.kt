@@ -5,9 +5,8 @@ import com.daggery.present.breathpage.entities.BreathStateEnum
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
 import com.daggery.present.domain.entities.BreathPatternItem
-import com.daggery.present.domain.usecases.GetBreathPatternItemByUuidUseCase
+import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.spekframework.spek2.Spek

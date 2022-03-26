@@ -3,10 +3,13 @@ package com.daggery.present.breathpage.viewmodel
 import androidx.lifecycle.ViewModel
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
-import com.daggery.present.domain.usecases.GetBreathPatternItemByUuidUseCase
+import com.daggery.present.domain.entities.BreathPatternItem
+import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
+@HiltViewModel
 class BreathPageViewModel @Inject constructor(
     private val mapper: BreathPatternStateHolderMapper,
     private val getBreathPatternItemByUuidUseCase: GetBreathPatternItemByUuidUseCase
@@ -20,8 +23,18 @@ class BreathPageViewModel @Inject constructor(
     private var totalDuration = 1
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
-        _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
-        if(_breathPatternStateHolder != null) {
+        // Test Only
+        _breathPatternStateHolder =
+            getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
+                ?: mapper.toBreathPatternStateHolder(
+                    BreathPatternItem(
+                        "0", "Box Breathing", 1, 1, 1, 1, 1, 1
+                    )
+                )
+
+        // Real Implementation
+        // _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
+        if (_breathPatternStateHolder != null) {
             timerEngine = TimerEngine(breathPatternStateHolder)
             timerState = timerEngine.timerState
             totalDuration = with(breathPatternStateHolder) {

@@ -6,17 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import com.daggery.present.breathpage.R
+import androidx.lifecycle.lifecycleScope
 import com.daggery.present.breathpage.databinding.FragmentBreathPageBinding
 import com.daggery.present.breathpage.viewmodel.BreathPageViewModel
 import com.daggery.present.sharedassets.BundleKeys
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class BreathPageFragment : Fragment() {
 
     private var _viewBinding: FragmentBreathPageBinding? = null
     private val viewBinding get() = _viewBinding!!
 
-    val viewModel: BreathPageViewModel by activityViewModels()
+    private val viewModel: BreathPageViewModel by activityViewModels()
 
     private var breathPatternUuid: String? = null
 
@@ -35,5 +38,9 @@ class BreathPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getBreathPatternStateHolder(breathPatternUuid ?: "")
+        }
     }
 }

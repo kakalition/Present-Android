@@ -3,10 +3,15 @@ object ApplicationId {
 }
 
 object Modules {
-    const val sharedassets = ":sharedassets"
     const val app = ":app"
     const val data = ":data"
     const val domain = ":domain"
+    const val sharedassets = ":sharedassets"
+    const val breathpage = ":component:breathpage"
+    const val dashboardpage = ":component:dashboardpage"
+    const val notificationpage = ":component:notificationpage"
+    const val patternlistpage = ":component:patternlistpage"
+    const val routinepage = ":component:routinepage"
 }
 
 object Release {
