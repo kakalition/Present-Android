@@ -41,6 +41,15 @@ class BreathPageFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getBreathPatternStateHolder(breathPatternUuid ?: "")
+            bindsState()
+        }
+
+    }
+
+    private fun bindsState() {
+        with(viewBinding) {
+            breathPageAppBar.title = viewModel.breathPatternStateHolder.name
+            currentStateText.text = viewModel.breathPatternStateHolder.state.name.lowercase().replaceFirstChar { it.uppercase() }
         }
     }
 }
