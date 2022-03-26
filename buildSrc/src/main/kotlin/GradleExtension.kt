@@ -41,7 +41,9 @@ fun Project.addSplashScreen() {
 fun Project.addAndroidCore() {
     dependencies {
         add("implementation", AndroidLibraries.appCompat)
+        add("implementation", AndroidLibraries.constraintLayout)
         add("implementation", AndroidLibraries.coreKtx)
+        add("implementation", AndroidLibraries.materialDesign)
     }
 }
 

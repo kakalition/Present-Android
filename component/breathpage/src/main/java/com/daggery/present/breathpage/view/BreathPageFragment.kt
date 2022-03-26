@@ -16,7 +16,7 @@ class BreathPageFragment : Fragment() {
     private var _viewBinding: FragmentBreathPageBinding? = null
     private val viewBinding get() = _viewBinding!!
 
-    private val viewModel: BreathPageViewModel by activityViewModels()
+    val viewModel: BreathPageViewModel by activityViewModels()
 
     private var breathPatternUuid: String? = null
 
