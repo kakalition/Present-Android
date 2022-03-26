@@ -19,7 +19,6 @@ import org.junit.Test
 internal class BreathPageFragmentTest {
 
     private lateinit var scenario: FragmentScenario<BreathPageFragment>
-    private val appBarTitle = withId(R.id.breath_pattern_name)
 
     @Before
     fun setup() {
@@ -29,8 +28,6 @@ internal class BreathPageFragmentTest {
     @Test
     fun when_initially_open_show_initial_breath_pattern_state() {
         scenario.onFragment {
-            it.viewModel.getBreathPatternStateHolder("1")
         }
-        onView(appBarTitle).check(matches(withText("")))
     }
 }
