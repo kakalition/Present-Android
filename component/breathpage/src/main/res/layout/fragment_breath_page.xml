@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:background="#000000"
+    android:background="@drawable/gradient_ground_state"
     tools:context=".view.BreathPageFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -45,7 +45,6 @@
             android:layout_height="90dp"
             android:src="@drawable/ic_play"
             app:tint="@color/black"
-            tools:visibility="gone"
             android:contentDescription="play button" />
 
         <TextView
@@ -61,6 +60,7 @@
             app:layout_constraintTop_toBottomOf="@id/play_bg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
             tools:text="4" />
 
     </FrameLayout>
@@ -106,7 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="22dp"
         android:fontFamily="@font/poppins_medium"
-        android:textAppearance="?attr/textAppearanceTitleSmall"
+        android:textAppearance="?attr/textAppearanceTitleLarge"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
