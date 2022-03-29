@@ -12,6 +12,11 @@ data class TimerState(
     val currentState: BreathStateEnum
 )
 
+data class StatePair(
+    val currentState: TimerState,
+    val nextState: TimerState
+)
+
 class TimerEngine @Inject constructor(
     private var breathPattern: BreathPatternStateHolder
 ){

@@ -2,12 +2,23 @@ package com.daggery.present.breathpage.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
+import com.daggery.present.breathpage.entities.BreathStateEnum
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
+
+data class NextStateHolder(
+    val nextState: BreathStateEnum,
+    val duration: Int
+) {
+    override fun toString(): String {
+        val state = nextState.name.lowercase().replaceFirstChar { it.uppercase() }
+        return "Next: $state ($duration)"
+    }
+}
 
 @HiltViewModel
 class BreathPageViewModel @Inject constructor(
@@ -20,7 +31,24 @@ class BreathPageViewModel @Inject constructor(
 
     private lateinit var timerEngine: TimerEngine
     lateinit var timerState: StateFlow<TimerState>
+    lateinit var stateList: List<NextStateHolder>
     private var totalDuration = 1
+
+    private fun createStateList(): MutableList<NextStateHolder> {
+        val tempList = mutableListOf<NextStateHolder>()
+
+        repeat(breathPatternStateHolder.repetitions) {
+            with(breathPatternStateHolder) {
+                tempList.add(NextStateHolder(state, inhaleDuration))
+                tempList.add(NextStateHolder(state, holdPostInhaleDuration))
+                tempList.add(NextStateHolder(state, exhaleDuration))
+                tempList.add(NextStateHolder(state, holdPostExhaleDuration))
+                if((it - 1) == breathPatternStateHolder.repetitions) tempList.add(NextStateHolder(BreathStateEnum.FINISHED, 0))
+            }
+        }
+        return tempList.filterNot { it.duration == 0 }.toMutableList()
+
+    }
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         // Test Only
