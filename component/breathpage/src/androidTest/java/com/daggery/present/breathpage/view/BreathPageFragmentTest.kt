@@ -1,5 +1,6 @@
 package com.daggery.present.breathpage.view
 
+/*
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onView
@@ -14,8 +15,10 @@ import com.google.android.apps.common.testing.accessibility.framework.Accessibil
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+*/
 
 //@RunWith(AndroidJUnit4::class)
+/*
 internal class BreathPageFragmentTest {
 
     private lateinit var scenario: FragmentScenario<BreathPageFragment>
@@ -30,4 +33,4 @@ internal class BreathPageFragmentTest {
         scenario.onFragment {
         }
     }
-}
+}*/

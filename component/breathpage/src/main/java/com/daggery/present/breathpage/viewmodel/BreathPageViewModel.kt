@@ -31,7 +31,6 @@ class BreathPageViewModel @Inject constructor(
 
     private lateinit var timerEngine: TimerEngine
     lateinit var timerState: StateFlow<TimerState>
-    lateinit var stateList: List<NextStateHolder>
     private var totalDuration = 1
 
     private fun createStateList(): MutableList<NextStateHolder> {
@@ -52,6 +51,7 @@ class BreathPageViewModel @Inject constructor(
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         // Test Only
+/*
         _breathPatternStateHolder =
             getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
                 ?: mapper.toBreathPatternStateHolder(
@@ -60,8 +60,9 @@ class BreathPageViewModel @Inject constructor(
                     )
                 )
 
+*/
         // Real Implementation
-        // _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
+        _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
         if (_breathPatternStateHolder != null) {
             timerEngine = TimerEngine(breathPatternStateHolder)
             timerState = timerEngine.timerState

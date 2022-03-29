@@ -28,21 +28,20 @@ internal class BreathPageViewModelTest @Inject constructor(
             mapper.toBreathPatternStateHolder(BreathPatternItem("1", "Pattern 1", 1, 1, 1, 1, 1, 1))
 /*
         1 ground
-        3 ready
+        1 ready
         1 inhale
         1 post inhale
         1 exhale
         1 post exhale
         1 finished
 */
-        val totalValueOneEmit = 9
+        val totalValueOneEmit = 7
 
         val uuidFour = "4"
 
         describe("#getBreathPatternItemStateHolder") {
             context("calls this method with valid uuid") {
                 it("returns BreathPatternStateHolder with corresponding uuid") {
-                    println("")
                     runTest {
                         sut.getBreathPatternStateHolder(uuidOne)
                         val value = sut.breathPatternStateHolder
@@ -60,7 +59,6 @@ internal class BreathPageViewModelTest @Inject constructor(
                         } catch(e: Exception) {
                             null
                         }
-                        println(value)
                         Assertions.assertEquals(null, value)
                     }
                 }
