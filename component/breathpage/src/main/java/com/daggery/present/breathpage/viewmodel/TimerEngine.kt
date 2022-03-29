@@ -21,8 +21,11 @@ class TimerEngine @Inject constructor(
     private var breathPattern: BreathPatternStateHolder
 ){
 
+    private var _rawTimerState = MutableStateFlow(TimerState(0, BreathStateEnum.GROUND))
+
     private var _timerState = MutableStateFlow(TimerState(0, BreathStateEnum.GROUND))
     val timerState = _timerState.asStateFlow()
+
 
     private val totalDuration = with(breathPattern) {
         return@with (inhaleDuration +
@@ -67,15 +70,6 @@ class TimerEngine @Inject constructor(
             value.currentState == BreathStateEnum.GROUND -> {
                 value.copy(currentDuration = 3, currentState = BreathStateEnum.READY)
             }
-            value.currentState == BreathStateEnum.READY && value.currentDuration == 3 -> {
-                value.copy(currentState = BreathStateEnum.READY)
-            }
-            value.currentState == BreathStateEnum.READY && value.currentDuration == 2 -> {
-                value.copy(currentState = BreathStateEnum.READY)
-            }
-            value.currentState == BreathStateEnum.READY && value.currentDuration == 1 -> {
-                value.copy(currentState = BreathStateEnum.READY)
-            }
             value.currentState == BreathStateEnum.READY && value.currentDuration == 0 -> {
                 value.copy(currentDuration = breathPattern.inhaleDuration, currentState = BreathStateEnum.INHALE)
             }
@@ -108,9 +102,12 @@ class TimerEngine @Inject constructor(
     }
 
     private suspend fun tickTime() {
-        val currentDuration = timerState.value.currentDuration - 1
-        val currentTimerState = cycleTimerState(timerState.value.copy(currentDuration = currentDuration))
-        _timerState.emit(currentTimerState)
+        val currentDuration = _rawTimerState.value.currentDuration - 1
+        val currentTimerState = cycleTimerState(_rawTimerState.value.copy(currentDuration = currentDuration))
+        _rawTimerState.value = currentTimerState
+        if(timerState.value.currentState != _rawTimerState.value.currentState) {
+            _timerState.emit(_rawTimerState.value)
+        }
     }
 
 }

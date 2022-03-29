@@ -50,7 +50,6 @@ class BreathPageFragment : Fragment() {
             viewModel.getBreathPatternStateHolder(breathPatternUuid ?: "")
             bindsState()
 
-            animateBackground()
         }
     }
 

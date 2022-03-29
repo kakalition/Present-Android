@@ -76,6 +76,7 @@ internal class BreathPageViewModelTest @Inject constructor(
                             sut.timerState.collect {
                                 ensureActive()
                                 value.add(it)
+                                println(it.toString())
                                 if (it.currentState == BreathStateEnum.FINISHED) this.cancel()
                             }
                         }
