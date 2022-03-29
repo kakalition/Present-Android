@@ -1,5 +1,6 @@
 package com.daggery.present.breathpage.view
 
+import android.animation.ValueAnimator
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -43,7 +44,15 @@ class BreathPageFragment : Fragment() {
             viewModel.getBreathPatternStateHolder(breathPatternUuid ?: "")
             bindsState()
         }
+    }
 
+    private fun animatePlayButton(valueAnimator: ValueAnimator) {
+        val value = (valueAnimator.animatedValue as Int) * requireContext().resources.displayMetrics.density
+        val params = viewBinding.playBg.layoutParams.apply {
+            height = value.toInt()
+            width = value.toInt()
+        }
+        viewBinding.playBg.layoutParams = params
     }
 
     private fun bindsState() {
