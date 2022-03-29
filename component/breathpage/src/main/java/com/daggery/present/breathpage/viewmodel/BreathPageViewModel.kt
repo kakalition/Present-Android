@@ -27,7 +27,9 @@ class BreathPageViewModel @Inject constructor(
 ): ViewModel() {
 
     private var _breathPatternStateHolder: BreathPatternStateHolder? = null
-    val breathPatternStateHolder get() = _breathPatternStateHolder!!
+    // val breathPatternStateHolder get() = _breathPatternStateHolder!!
+    // TESTING
+    val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 1, 1, 1, 1, 1)
 
     private lateinit var timerEngine: TimerEngine
     lateinit var timerState: StateFlow<TimerState>
