@@ -56,7 +56,6 @@ class BreathPageFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
 
-
             viewBinding.playBg.setOnClickListener {
                 viewBinding.playButton.visibility = View.GONE
                 viewBinding.timeCounter.visibility = View.VISIBLE
@@ -94,10 +93,8 @@ class BreathPageFragment : Fragment() {
         background.colors?.let {
             gradientOne = ValueAnimator.ofArgb(it[0], gradientPair.first)
             gradientOne.apply {
-                duration = 1000
+                duration = 600
                 interpolator = DecelerateInterpolator()
-                repeatCount = ValueAnimator.INFINITE
-                repeatMode = ValueAnimator.REVERSE
                 addUpdateListener { color ->
                     val temp = background.colors
                     temp?.set(0, color.animatedValue as Int)
@@ -106,10 +103,8 @@ class BreathPageFragment : Fragment() {
             }
             gradientTwo = ValueAnimator.ofArgb(it[1], gradientPair.second)
             gradientTwo.apply {
-                duration = 1000
+                duration = 600
                 interpolator = DecelerateInterpolator()
-                repeatCount = ValueAnimator.INFINITE
-                repeatMode = ValueAnimator.REVERSE
                 addUpdateListener { color ->
                     val temp = background.colors
                     temp?.set(1, color.animatedValue as Int)
