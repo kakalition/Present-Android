@@ -22,8 +22,10 @@ import com.daggery.present.breathpage.viewmodel.BreathPageViewModel
 import com.daggery.present.breathpage.viewmodel.TimerState
 import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -73,6 +75,21 @@ class BreathPageFragment : Fragment() {
         return viewBinding.root
     }
 
+    private val playBgOnClickListener: (v: View) -> Unit = {
+        if (viewModel.isPaused.value) {
+            timeCounterAnimator.cancel()
+            viewModel.resume()
+        } else {
+            timeCounterAnimator.start()
+            viewModel.pause()
+        }
+
+        viewBinding.playButton.visibility = View.GONE
+        viewBinding.timeCounter.visibility = View.VISIBLE
+
+        viewModel.startSession()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -80,26 +97,10 @@ class BreathPageFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
 
-            viewBinding.playBg.setOnClickListener {
-                launch {
-                    if(viewModel.isPaused.value) {
-                        timeCounterAnimator.cancel()
-                        viewModel.resume()
-                    } else {
-                        timeCounterAnimator.start()
-                        viewModel.pause()
-                    }
-                }
-
-                viewBinding.playButton.visibility = View.GONE
-                viewBinding.timeCounter.visibility = View.VISIBLE
-                launch {
-                    viewModel.startSession()
-                }
-            }
-
             viewModel.getBreathPatternStateHolder(breathPatternUuid ?: "")
             bindsState()
+
+            viewBinding.playBg.setOnClickListener(playBgOnClickListener)
 
             // TODO: Check correct behavior
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -112,7 +113,7 @@ class BreathPageFragment : Fragment() {
                     }
                 }
                 launch {
-                    viewModel.timerStateFlow.collect {
+                    viewModel.timerState.collect {
                         ensureActive()
                         Log.d("LOL EMIT", it.toString())
                         viewBinding.currentStateText.text = it.currentState.toString()
@@ -125,7 +126,6 @@ class BreathPageFragment : Fragment() {
         }
     }
 
-/*
     override fun onStart() {
         super.onStart()
         Log.d("LOL", "onStart")
@@ -139,14 +139,14 @@ class BreathPageFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         Log.d("LOL", "onStop")
-        //pauseAnimation()
+        viewModel.pauseAnim()
+        pauseAnimation()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d("LOL", "onDestroy")
     }
-*/
 
     private fun startAnimation() {
         gradientOneAnimator?.start()

@@ -1,5 +1,6 @@
 package com.daggery.present.breathpage.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
@@ -32,7 +33,10 @@ class BreathPageViewModel @Inject constructor(
     val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 4, 4, 4, 4, 2)
 
     private lateinit var timerEngine: TimerEngine
-    lateinit var timerState: StateFlow<TimerState>
+    private var _timerState = MutableStateFlow(
+        TimerState(1, BreathStateEnum.GROUND)
+    )
+    val timerState get() = _timerState.asStateFlow()
     lateinit var timerStateFlow: Flow<TimerState>
     private var totalDuration = 1
 
@@ -41,12 +45,16 @@ class BreathPageViewModel @Inject constructor(
     val isPaused get() = _isPaused.asStateFlow()
     private var isAnimationRunning = MutableStateFlow(false)
 
-    suspend fun pause() {
-        _isPaused.emit(true)
+    fun pause() {
+        viewModelScope.launch {
+            _isPaused.emit(true)
+        }
     }
     
-    suspend fun resume() {
-        _isPaused.emit(false)
+    fun resume() {
+        viewModelScope.launch {
+            _isPaused.emit(false)
+        }
     }
 
     fun startAnim() {
@@ -65,12 +73,18 @@ class BreathPageViewModel @Inject constructor(
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
         if (breathPatternStateHolder != null) {
             timerEngine = TimerEngine(breathPatternStateHolder)
-            timerState = timerEngine.timerState
+            //timerState = timerEngine.timerState
             totalDuration = with(breathPatternStateHolder) {
                 return@with (inhaleDuration + holdPostInhaleDuration + exhaleDuration + holdPostExhaleDuration) * repetitions
             }
 
             timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
+            viewModelScope.launch {
+                timerStateFlow.collect {
+                    Log.d("LOL emit", it.toString())
+                    _timerState.emit(it)
+                }
+            }
         }
     }
 
