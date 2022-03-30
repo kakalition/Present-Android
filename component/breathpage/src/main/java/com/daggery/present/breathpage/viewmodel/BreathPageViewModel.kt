@@ -31,14 +31,14 @@ class BreathPageViewModel @Inject constructor(
 ): ViewModel() {
 
     private var _breathPatternStateHolder: BreathPatternStateHolder? = null
-    val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 1, 1, 1, 1, 1)
+    val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 2, 2, 2, 2, 2)
 
     private lateinit var timerEngine: TimerEngine
     lateinit var timerState: StateFlow<TimerState>
     lateinit var timerStateFlow: Flow<TimerState>
     private var totalDuration = 1
 
-    var isSessionActive = true
+    private var isSessionActive = true
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
@@ -70,7 +70,7 @@ class BreathPageViewModel @Inject constructor(
         return mutableList.filterNot { it.currentDuration == 0 }
     }
 
-    // TODO: Create aniamtion and data algorithm
+    // TODO: Create animation and data algorithm
     private suspend fun timerStateFlowBuilder(value: List<TimerState>): Flow<TimerState> {
         return flow {
             value.forEach {

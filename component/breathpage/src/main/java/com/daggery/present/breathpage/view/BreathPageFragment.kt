@@ -169,40 +169,36 @@ class BreathPageFragment : Fragment() {
     }
 
     private fun animatePlayButton(timerState: TimerState) {
-        val timeAnimator = ValueAnimator.ofInt(timerState.currentDuration, 0)
-        timeAnimator.duration = timerState.currentDuration * 1000L
+        val timeAnimator = ValueAnimator.ofInt(timerState.currentDuration, 0).apply {
+            duration = timerState.currentDuration * 1000L
+            addUpdateListener {
+                viewBinding.timeCounter.text = it.animatedValue.toString()
+            }
+        }
 
-        val sizeAnimator: ValueAnimator = when(timerState.currentState) {
+        val sizeAnimator: ValueAnimator? = when(timerState.currentState) {
             BreathStateEnum.INHALE -> {
                 ValueAnimator.ofInt(150, 250)
             }
             BreathStateEnum.EXHALE -> {
                 ValueAnimator.ofInt(250, 150)
             }
-            else -> {
-                val currentSize = viewBinding.playBg.layoutParams.height
-                ValueAnimator.ofInt(currentSize, currentSize)
+            else -> null
+        }?.apply {
+            duration = timerState.currentDuration * 1000L
+            interpolator = DecelerateInterpolator()
+            addUpdateListener {
+                val value = (animatedValue as Int) * requireContext().resources.displayMetrics.density
+                val params = viewBinding.playBg.layoutParams.apply {
+                    height = value.toInt()
+                    width = value.toInt()
+                }
+                viewBinding.playBg.layoutParams = params
             }
-        }
-
-        sizeAnimator.duration = timerState.currentDuration * 1000L
-        sizeAnimator.interpolator = DecelerateInterpolator()
-
-        timeAnimator.addUpdateListener {
-            viewBinding.timeCounter.text = it.animatedValue.toString()
-        }
-
-        sizeAnimator.addUpdateListener {
-            val value = (sizeAnimator.animatedValue as Int) * requireContext().resources.displayMetrics.density
-            val params = viewBinding.playBg.layoutParams.apply {
-                height = value.toInt()
-                width = value.toInt()
-            }
-            viewBinding.playBg.layoutParams = params
         }
 
         timeAnimator.start()
-        sizeAnimator.start()
+        sizeAnimator?.start()
     }
 
     private fun bindsState() {
