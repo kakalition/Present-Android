@@ -32,8 +32,8 @@
 
     <FrameLayout
         android:id="@+id/play_bg"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:background="@drawable/shape_circle"
         android:backgroundTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -77,7 +77,8 @@
         android:fontFamily="@font/poppins_semi_bold"
         android:textAppearance="?attr/textAppearanceHeadline4"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/restart_button"
+        android:layout_marginTop="22dp"
+        app:layout_constraintTop_toBottomOf="@id/play_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="Start" />

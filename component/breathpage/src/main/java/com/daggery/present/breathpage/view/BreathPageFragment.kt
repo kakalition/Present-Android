@@ -1,8 +1,7 @@
 package com.daggery.present.breathpage.view
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ValueAnimator
+import android.animation.*
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
@@ -11,9 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-import android.view.animation.Interpolator
 import android.view.animation.LinearInterpolator
-import androidx.core.animation.addListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -26,10 +23,8 @@ import com.daggery.present.breathpage.viewmodel.TimerState
 import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
 
 @AndroidEntryPoint
 class BreathPageFragment : Fragment() {
@@ -41,10 +36,28 @@ class BreathPageFragment : Fragment() {
 
     private var breathPatternUuid: String? = null
 
-    private var gradientOne: ValueAnimator? = null
-    private var gradientTwo: ValueAnimator? = null
+    private var gradientOneAnimator: ValueAnimator? = null
+    private var gradientTwoAnimator: ValueAnimator? = null
     private var timeAnimator: ValueAnimator? = null
     private var sizeAnimator: ValueAnimator? = null
+
+    private val keyframe1 = Keyframe.ofInt(0.0F, 1)
+    private val keyframe2 = Keyframe.ofInt(0.6F, 0)
+    private val propertyValuesHolder = PropertyValuesHolder.ofKeyframe("alpha", keyframe1, keyframe2)
+    private val timeCounterAnimator = ValueAnimator.ofPropertyValuesHolder(propertyValuesHolder).apply {
+        duration = 800
+        repeatCount = ValueAnimator.INFINITE
+        repeatMode = ValueAnimator.REVERSE
+        interpolator = LinearInterpolator()
+        addUpdateListener { opacity ->
+            viewBinding.timeCounter.setTextColor(Color.argb((opacity.animatedValue as Int).toFloat(), 0F, 0F, 0F))
+        }
+        addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationCancel(animation: Animator?) {
+                viewBinding.timeCounter.setTextColor(Color.argb(1F, 0F, 0F, 0F))
+            }
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +68,7 @@ class BreathPageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("LOL", "onCreateView")
         _viewBinding = FragmentBreathPageBinding.inflate(inflater, container, false)
         return viewBinding.root
     }
@@ -62,13 +76,17 @@ class BreathPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d("LOL", "onViewCreated")
+
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewBinding.playBg.setOnClickListener {
                 launch {
                     if(viewModel.isPaused.value) {
+                        timeCounterAnimator.cancel()
                         viewModel.resume()
                     } else {
+                        timeCounterAnimator.start()
                         viewModel.pause()
                     }
                 }
@@ -84,16 +102,19 @@ class BreathPageFragment : Fragment() {
             bindsState()
 
             // TODO: Check correct behavior
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.isPaused.collect {
-                        if(it) pauseAnimation()
+                        if(it) {
+                            pauseAnimation()
+                        }
                         else resumeAnimation()
                     }
                 }
                 launch {
                     viewModel.timerStateFlow.collect {
                         ensureActive()
+                        Log.d("LOL EMIT", it.toString())
                         viewBinding.currentStateText.text = it.currentState.toString()
                         animateBackground(it)
                         animatePlayButton(it)
@@ -104,23 +125,46 @@ class BreathPageFragment : Fragment() {
         }
     }
 
+/*
+    override fun onStart() {
+        super.onStart()
+        Log.d("LOL", "onStart")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("LOL", "onPaise")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("LOL", "onStop")
+        //pauseAnimation()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("LOL", "onDestroy")
+    }
+*/
+
     private fun startAnimation() {
-        gradientOne?.start()
-        gradientTwo?.start()
+        gradientOneAnimator?.start()
+        gradientTwoAnimator?.start()
         timeAnimator?.start()
         sizeAnimator?.start()
     }
 
     private fun pauseAnimation() {
-        gradientOne?.pause()
-        gradientTwo?.pause()
+        gradientOneAnimator?.pause()
+        gradientTwoAnimator?.pause()
         timeAnimator?.pause()
         sizeAnimator?.pause()
     }
 
     private fun resumeAnimation() {
-        gradientOne?.resume()
-        gradientTwo?.resume()
+        gradientOneAnimator?.resume()
+        gradientTwoAnimator?.resume()
         timeAnimator?.resume()
         sizeAnimator?.resume()
     }
@@ -130,8 +174,8 @@ class BreathPageFragment : Fragment() {
         val gradientPair = createGradientPair(state.currentState)
 
         background.colors?.let {
-            gradientOne = ValueAnimator.ofArgb(it[0], gradientPair.first)
-            gradientOne?.apply {
+            gradientOneAnimator = ValueAnimator.ofArgb(it[0], gradientPair.first)
+            gradientOneAnimator?.apply {
                 duration = 600
                 interpolator = DecelerateInterpolator()
                 addUpdateListener { color ->
@@ -140,8 +184,8 @@ class BreathPageFragment : Fragment() {
                     background.colors = temp
                 }
             }
-            gradientTwo = ValueAnimator.ofArgb(it[1], gradientPair.second)
-            gradientTwo?.apply {
+            gradientTwoAnimator = ValueAnimator.ofArgb(it[1], gradientPair.second)
+            gradientTwoAnimator?.apply {
                 duration = 600
                 interpolator = DecelerateInterpolator()
                 addUpdateListener { color ->
@@ -151,8 +195,8 @@ class BreathPageFragment : Fragment() {
                 }
             }
 
-            gradientOne?.start()
-            gradientTwo?.start()
+            gradientOneAnimator?.start()
+            gradientTwoAnimator?.start()
         }
     }
 

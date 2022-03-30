@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.entities.BreathStateEnum
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
-import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -39,9 +38,9 @@ class BreathPageViewModel @Inject constructor(
 
     private var isSessionActive = true
     private var _isPaused = MutableStateFlow(true)
-    var _isAnimationRunning = MutableStateFlow(false)
     val isPaused get() = _isPaused.asStateFlow()
-    
+    private var isAnimationRunning = MutableStateFlow(false)
+
     suspend fun pause() {
         _isPaused.emit(true)
     }
@@ -52,13 +51,13 @@ class BreathPageViewModel @Inject constructor(
 
     fun startAnim() {
         viewModelScope.launch {
-            _isAnimationRunning.emit(true)
+            isAnimationRunning.emit(true)
         }
     }
 
     fun pauseAnim() {
         viewModelScope.launch {
-            _isAnimationRunning.emit(false)
+            isAnimationRunning.emit(false)
         }
     }
 
@@ -78,6 +77,7 @@ class BreathPageViewModel @Inject constructor(
     private fun buildTimerStateList(): List<TimerState> {
         val mutableList = mutableListOf<TimerState>()
 
+        mutableList.add(TimerState(1, BreathStateEnum.GROUND))
         mutableList.add(TimerState(3, BreathStateEnum.READY))
         with(breathPatternStateHolder) {
             repeat(breathPatternStateHolder.repetitions) {
@@ -92,28 +92,27 @@ class BreathPageViewModel @Inject constructor(
         return mutableList.filterNot { it.currentDuration == 0 }
     }
 
-    // TODO: Create animation and data algorithm
     private suspend fun timerStateFlowBuilder(value: List<TimerState>): Flow<TimerState> {
         return flow {
             value.forEach {
                 emit(it)
                 delay(it.currentDuration * 1000L)
                 if(isPaused.value) isPaused.first { isPaused -> !isPaused }
-                if(_isAnimationRunning.value) _isAnimationRunning.first { isRun -> !isRun }
+                if(isAnimationRunning.value) isAnimationRunning.first { isRun -> !isRun }
             }
         }
     }
 
-    suspend fun startSession() {
-        timerEngine.startTimer()
+    fun startSession() {
         isSessionActive = true
     }
 
     fun stopSession() {
-        timerEngine.stopTimer()
+        isSessionActive = false
     }
 
     suspend fun resetSession() {
-        timerEngine.resetTimer()
+        isSessionActive = false
+        timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
     }
 }
