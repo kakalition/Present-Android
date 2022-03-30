@@ -1,5 +1,7 @@
 package com.daggery.present.breathpage.view
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.drm.DrmStore.Playback.RESUME
 import android.graphics.Color
@@ -12,6 +14,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
+import android.view.animation.LinearInterpolator
+import androidx.core.animation.addListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +28,7 @@ import com.daggery.present.breathpage.viewmodel.TimerState
 import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
@@ -72,7 +77,6 @@ class BreathPageFragment : Fragment() {
                 launch {
                     viewModel.timerStateFlow.collect {
                         ensureActive()
-                        Log.d("LOL", it.toString())
                         viewBinding.currentStateText.text = it.currentState.toString()
                         animateBackground(it)
                         animatePlayButton(it)
@@ -165,10 +169,16 @@ class BreathPageFragment : Fragment() {
 
     private fun animatePlayButton(timerState: TimerState) {
         val timeAnimator = ValueAnimator.ofInt(timerState.currentDuration, 0).apply {
-            duration = timerState.currentDuration * 1000L
+            duration = (timerState.currentDuration * 1000L) - 150
+            interpolator = LinearInterpolator()
             addUpdateListener {
                 viewBinding.timeCounter.text = it.animatedValue.toString()
             }
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    viewBinding.timeCounter.text = "0"
+                }
+            })
         }
 
         val sizeAnimator: ValueAnimator? = when(timerState.currentState) {
