@@ -3,8 +3,6 @@ package com.daggery.present.breathpage.view
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
-import android.drm.DrmStore.Playback.RESUME
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.util.Log
@@ -43,6 +41,11 @@ class BreathPageFragment : Fragment() {
 
     private var breathPatternUuid: String? = null
 
+    private var gradientOne: ValueAnimator? = null
+    private var gradientTwo: ValueAnimator? = null
+    private var timeAnimator: ValueAnimator? = null
+    private var sizeAnimator: ValueAnimator? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         breathPatternUuid = arguments?.getString(BundleKeys.BREATH_PATTERN_UUID)
@@ -62,6 +65,14 @@ class BreathPageFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewBinding.playBg.setOnClickListener {
+                launch {
+                    if(viewModel.isPaused.value) {
+                        viewModel.resume()
+                    } else {
+                        viewModel.pause()
+                    }
+                }
+
                 viewBinding.playButton.visibility = View.GONE
                 viewBinding.timeCounter.visibility = View.VISIBLE
                 launch {
@@ -75,6 +86,12 @@ class BreathPageFragment : Fragment() {
             // TODO: Check correct behavior
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 launch {
+                    viewModel.isPaused.collect {
+                        if(it) pauseAnimation()
+                        else resumeAnimation()
+                    }
+                }
+                launch {
                     viewModel.timerStateFlow.collect {
                         ensureActive()
                         viewBinding.currentStateText.text = it.currentState.toString()
@@ -87,16 +104,34 @@ class BreathPageFragment : Fragment() {
         }
     }
 
+    private fun startAnimation() {
+        gradientOne?.start()
+        gradientTwo?.start()
+        timeAnimator?.start()
+        sizeAnimator?.start()
+    }
+
+    private fun pauseAnimation() {
+        gradientOne?.pause()
+        gradientTwo?.pause()
+        timeAnimator?.pause()
+        sizeAnimator?.pause()
+    }
+
+    private fun resumeAnimation() {
+        gradientOne?.resume()
+        gradientTwo?.resume()
+        timeAnimator?.resume()
+        sizeAnimator?.resume()
+    }
+
     private fun animateBackground(state: TimerState) {
         val background = viewBinding.baseLayout.background as GradientDrawable
-        val gradientOne: ValueAnimator
-        val gradientTwo: ValueAnimator
-
         val gradientPair = createGradientPair(state.currentState)
 
         background.colors?.let {
             gradientOne = ValueAnimator.ofArgb(it[0], gradientPair.first)
-            gradientOne.apply {
+            gradientOne?.apply {
                 duration = 600
                 interpolator = DecelerateInterpolator()
                 addUpdateListener { color ->
@@ -106,7 +141,7 @@ class BreathPageFragment : Fragment() {
                 }
             }
             gradientTwo = ValueAnimator.ofArgb(it[1], gradientPair.second)
-            gradientTwo.apply {
+            gradientTwo?.apply {
                 duration = 600
                 interpolator = DecelerateInterpolator()
                 addUpdateListener { color ->
@@ -116,8 +151,8 @@ class BreathPageFragment : Fragment() {
                 }
             }
 
-            gradientOne.start()
-            gradientTwo.start()
+            gradientOne?.start()
+            gradientTwo?.start()
         }
     }
 
@@ -168,20 +203,24 @@ class BreathPageFragment : Fragment() {
     }
 
     private fun animatePlayButton(timerState: TimerState) {
-        val timeAnimator = ValueAnimator.ofInt(timerState.currentDuration, 0).apply {
+        timeAnimator = ValueAnimator.ofInt(timerState.currentDuration, 0).apply {
             duration = (timerState.currentDuration * 1000L) - 150
             interpolator = LinearInterpolator()
             addUpdateListener {
                 viewBinding.timeCounter.text = it.animatedValue.toString()
             }
             addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator?) {
+                    viewModel.startAnim()
+                }
                 override fun onAnimationEnd(animation: Animator?) {
                     viewBinding.timeCounter.text = "0"
+                    viewModel.pauseAnim()
                 }
             })
         }
 
-        val sizeAnimator: ValueAnimator? = when(timerState.currentState) {
+        sizeAnimator = when(timerState.currentState) {
             BreathStateEnum.INHALE -> {
                 ValueAnimator.ofInt(150, 250)
             }
@@ -202,7 +241,7 @@ class BreathPageFragment : Fragment() {
             }
         }
 
-        timeAnimator.start()
+        timeAnimator?.start()
         sizeAnimator?.start()
     }
 

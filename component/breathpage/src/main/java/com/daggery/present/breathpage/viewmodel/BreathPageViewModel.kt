@@ -1,6 +1,7 @@
 package com.daggery.present.breathpage.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.entities.BreathStateEnum
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
@@ -8,10 +9,8 @@ import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class NextStateHolder(
@@ -39,6 +38,29 @@ class BreathPageViewModel @Inject constructor(
     private var totalDuration = 1
 
     private var isSessionActive = true
+    private var _isPaused = MutableStateFlow(true)
+    var _isAnimationRunning = MutableStateFlow(false)
+    val isPaused get() = _isPaused.asStateFlow()
+    
+    suspend fun pause() {
+        _isPaused.emit(true)
+    }
+    
+    suspend fun resume() {
+        _isPaused.emit(false)
+    }
+
+    fun startAnim() {
+        viewModelScope.launch {
+            _isAnimationRunning.emit(true)
+        }
+    }
+
+    fun pauseAnim() {
+        viewModelScope.launch {
+            _isAnimationRunning.emit(false)
+        }
+    }
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
@@ -76,6 +98,8 @@ class BreathPageViewModel @Inject constructor(
             value.forEach {
                 emit(it)
                 delay(it.currentDuration * 1000L)
+                if(isPaused.value) isPaused.first { isPaused -> !isPaused }
+                if(_isAnimationRunning.value) _isAnimationRunning.first { isRun -> !isRun }
             }
         }
     }
