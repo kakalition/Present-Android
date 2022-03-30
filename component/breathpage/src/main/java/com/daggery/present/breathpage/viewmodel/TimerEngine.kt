@@ -26,7 +26,6 @@ class TimerEngine @Inject constructor(
     private var _timerState = MutableStateFlow(TimerState(0, BreathStateEnum.GROUND))
     val timerState = _timerState.asStateFlow()
 
-
     private val totalDuration = with(breathPattern) {
         return@with (inhaleDuration +
                 holdPostInhaleDuration +
@@ -42,8 +41,12 @@ class TimerEngine @Inject constructor(
     )
 
     suspend fun startTimer() {
+        _timerState.emit(timerState.value.copy(currentDuration = 3, currentState = BreathStateEnum.READY))
+        _rawTimerState.emit(timerState.value.copy(currentDuration = 3, currentState = BreathStateEnum.READY))
         val isReset = clockEngine.startTimer()
 
+        //delay
+        //delay()
         // Emit BreathStateEnum.FINISHED to indicate timer has reached end.
         if(!isReset) {
             _timerState.emit(timerState.value.copy(
@@ -67,9 +70,6 @@ class TimerEngine @Inject constructor(
 
     private fun cycleTimerState(value: TimerState): TimerState {
         return when {
-            value.currentState == BreathStateEnum.GROUND -> {
-                value.copy(currentDuration = 3, currentState = BreathStateEnum.READY)
-            }
             value.currentState == BreathStateEnum.READY && value.currentDuration == 0 -> {
                 value.copy(currentDuration = breathPattern.inhaleDuration, currentState = BreathStateEnum.INHALE)
             }
@@ -101,6 +101,7 @@ class TimerEngine @Inject constructor(
         }
     }
 
+    // TODO: Issue: last second emission not delayed
     private suspend fun tickTime() {
         val currentDuration = _rawTimerState.value.currentDuration - 1
         val currentTimerState = cycleTimerState(_rawTimerState.value.copy(currentDuration = currentDuration))

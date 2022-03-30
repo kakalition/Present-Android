@@ -27,7 +27,6 @@ internal class BreathPageViewModelTest @Inject constructor(
         val valueOne =
             mapper.toBreathPatternStateHolder(BreathPatternItem("1", "Pattern 1", 1, 1, 1, 1, 1, 1))
 /*
-        1 ground
         1 ready
         1 inhale
         1 post inhale
@@ -35,7 +34,7 @@ internal class BreathPageViewModelTest @Inject constructor(
         1 post exhale
         1 finished
 */
-        val totalValueOneEmit = 7
+        val totalValueOneEmit = 6
 
         val uuidFour = "4"
 
@@ -68,12 +67,12 @@ internal class BreathPageViewModelTest @Inject constructor(
         describe("#startSession") {
             context("calls this method") {
                 it("starts session timer") {
-                    runTest {
+                    runBlocking {
                         sut.getBreathPatternStateHolder(uuidOne)
                         val value = mutableListOf<TimerState>()
 
                         val job = launch {
-                            sut.timerState.collect {
+                            sut.timerStateFlow.collect {
                                 ensureActive()
                                 value.add(it)
                                 println(it.toString())

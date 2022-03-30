@@ -14,4 +14,8 @@
     <color name="purple_two">#D38CFF</color>
     <color name="blue_one">#5433FF</color>
     <color name="blue_two">#20BDFF</color>
+    <color name="orange_one">#FF5F6D</color>
+    <color name="orange_two">#FFC371</color>
+    <color name="green_one">#3BB98C</color>
+    <color name="green_two">#76FFA9</color>
 </resources>

@@ -7,7 +7,11 @@ import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 data class NextStateHolder(
@@ -31,37 +35,54 @@ class BreathPageViewModel @Inject constructor(
 
     private lateinit var timerEngine: TimerEngine
     lateinit var timerState: StateFlow<TimerState>
+    lateinit var timerStateFlow: Flow<TimerState>
     private var totalDuration = 1
 
-    private fun createStateList(): MutableList<NextStateHolder> {
-        val tempList = mutableListOf<NextStateHolder>()
-
-        repeat(breathPatternStateHolder.repetitions) {
-            with(breathPatternStateHolder) {
-                tempList.add(NextStateHolder(state, inhaleDuration))
-                tempList.add(NextStateHolder(state, holdPostInhaleDuration))
-                tempList.add(NextStateHolder(state, exhaleDuration))
-                tempList.add(NextStateHolder(state, holdPostExhaleDuration))
-                if((it - 1) == breathPatternStateHolder.repetitions) tempList.add(NextStateHolder(BreathStateEnum.FINISHED, 0))
-            }
-        }
-        return tempList.filterNot { it.duration == 0 }.toMutableList()
-
-    }
+    var isSessionActive = true
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
-        if (_breathPatternStateHolder != null) {
+        if (breathPatternStateHolder != null) {
             timerEngine = TimerEngine(breathPatternStateHolder)
             timerState = timerEngine.timerState
             totalDuration = with(breathPatternStateHolder) {
                 return@with (inhaleDuration + holdPostInhaleDuration + exhaleDuration + holdPostExhaleDuration) * repetitions
+            }
+
+            timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
+        }
+    }
+
+    private fun buildTimerStateList(): List<TimerState> {
+        val mutableList = mutableListOf<TimerState>()
+
+        mutableList.add(TimerState(3, BreathStateEnum.READY))
+        with(breathPatternStateHolder) {
+            repeat(breathPatternStateHolder.repetitions) {
+                mutableList.add(TimerState(inhaleDuration, BreathStateEnum.INHALE))
+                mutableList.add(TimerState(holdPostInhaleDuration, BreathStateEnum.HOLD_POST_INHALE))
+                mutableList.add(TimerState(exhaleDuration, BreathStateEnum.EXHALE))
+                mutableList.add(TimerState(holdPostExhaleDuration, BreathStateEnum.HOLD_POST_EXHALE))
+            }
+        }
+        mutableList.add(TimerState(1, BreathStateEnum.FINISHED))
+
+        return mutableList.filterNot { it.currentDuration == 0 }
+    }
+
+    // TODO: Create aniamtion and data algorithm
+    private suspend fun timerStateFlowBuilder(value: List<TimerState>): Flow<TimerState> {
+        return flow {
+            value.forEach {
+                emit(it)
+                delay(it.currentDuration * 1000L)
             }
         }
     }
 
     suspend fun startSession() {
         timerEngine.startTimer()
+        isSessionActive = true
     }
 
     fun stopSession() {

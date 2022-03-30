@@ -11,6 +11,7 @@ dependencies {
     implementation(project(Modules.data))
     implementation(project(Modules.sharedassets))
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
 
     addFragmentKtx()
 
