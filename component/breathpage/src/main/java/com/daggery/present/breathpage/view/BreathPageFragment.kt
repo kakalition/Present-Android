@@ -77,10 +77,8 @@ class BreathPageFragment : Fragment() {
 
     private val playBgOnClickListener: (v: View) -> Unit = {
         if (viewModel.isPaused.value) {
-            timeCounterAnimator.cancel()
             viewModel.resume()
         } else {
-            timeCounterAnimator.start()
             viewModel.pause()
         }
 
@@ -160,6 +158,7 @@ class BreathPageFragment : Fragment() {
         gradientTwoAnimator?.pause()
         timeAnimator?.pause()
         sizeAnimator?.pause()
+        timeCounterAnimator.start()
     }
 
     private fun resumeAnimation() {
@@ -167,6 +166,7 @@ class BreathPageFragment : Fragment() {
         gradientTwoAnimator?.resume()
         timeAnimator?.resume()
         sizeAnimator?.resume()
+        timeCounterAnimator.cancel()
     }
 
     private fun animateBackground(state: TimerState) {

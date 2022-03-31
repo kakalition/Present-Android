@@ -21,6 +21,7 @@ dependencies {
 
     addFragmentKtx()
     addNavigation()
+    addRoom()
 
     addSpek()
     addArchTesting()
