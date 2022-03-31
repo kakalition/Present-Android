@@ -12,16 +12,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class NextStateHolder(
-    val nextState: BreathStateEnum,
-    val duration: Int
-) {
-    override fun toString(): String {
-        val state = nextState.name.lowercase().replaceFirstChar { it.uppercase() }
-        return "Next: $state ($duration)"
-    }
-}
-
 @HiltViewModel
 class BreathPageViewModel @Inject constructor(
     private val mapper: BreathPatternStateHolderMapper,
@@ -80,7 +70,7 @@ class BreathPageViewModel @Inject constructor(
     private fun buildTimerStateList(): List<TimerState> {
         val mutableList = mutableListOf<TimerState>()
 
-        mutableList.add(TimerState(1, BreathStateEnum.GROUND))
+        //mutableList.add(TimerState(1, BreathStateEnum.GROUND))
         mutableList.add(TimerState(3, BreathStateEnum.READY))
         with(breathPatternStateHolder) {
             repeat(breathPatternStateHolder.repetitions) {
@@ -98,10 +88,12 @@ class BreathPageViewModel @Inject constructor(
     private suspend fun timerStateFlowBuilder(value: List<TimerState>): Flow<TimerState> {
         return flow {
             value.forEach {
+                // If session is paused, wait until not paused
+                if(isSessionPaused.value) isSessionPaused.first { isPaused -> !isPaused }
+                // If animation still running, wait until it is finished
+                if(isAnimationRunning.value) isAnimationRunning.first { isRun -> !isRun }
                 emit(it)
                 delay(it.currentDuration * 1000L)
-                if(isSessionPaused.value) isSessionPaused.first { isPaused -> !isPaused }
-                if(isAnimationRunning.value) isAnimationRunning.first { isRun -> !isRun }
             }
         }
     }

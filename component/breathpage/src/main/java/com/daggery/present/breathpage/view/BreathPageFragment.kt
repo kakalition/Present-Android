@@ -100,12 +100,11 @@ class BreathPageFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.isSessionPaused.collect {
-                        if(it) {
-                            pauseAnimation()
-                        }
+                        if(it) pauseAnimation()
                         else resumeAnimation()
                     }
                 }
+                Log.d("LOL first emit", viewModel.timerState.value.toString())
                 launch {
                     viewModel.timerState.collect {
                         ensureActive()
