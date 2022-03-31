@@ -19,13 +19,13 @@ class BreathPageViewModel @Inject constructor(
 ): ViewModel() {
 
     private var _breathPatternStateHolder: BreathPatternStateHolder? = null
-    val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 4, 4, 4, 4, 2)
+    val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 2, 0, 2, 0, 1)
 
-
-    private lateinit var _timerStateFlow: Flow<TimerState>
-    private var _timerState = MutableStateFlow(
-        TimerState(1, BreathStateEnum.GROUND)
-    )
+    private lateinit var _timerStateFlow: Flow<Pair<TimerState, TimerState>>
+    private var _timerState = MutableStateFlow(Pair(
+        TimerState(1, BreathStateEnum.GROUND),
+        TimerState(3, BreathStateEnum.READY)
+    ))
     val timerState get() = _timerState.asStateFlow()
 
     private var _isSessionPaused = MutableStateFlow(true)
@@ -34,7 +34,7 @@ class BreathPageViewModel @Inject constructor(
 
     // TODO: Implement
     suspend fun resetSession() {
-        _timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
+        //_timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
     }
 
     fun stopSession() {
@@ -58,13 +58,100 @@ class BreathPageViewModel @Inject constructor(
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
         if (breathPatternStateHolder != null) {
-            _timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
+            _timerStateFlow = timerStateFlowBuilder(buildTimerStatePairList())
             viewModelScope.launch {
                 _timerStateFlow.collect {
                     _timerState.emit(it)
                 }
             }
         }
+    }
+
+    private fun buildTimerStatePairList(): List<Pair<TimerState, TimerState>> {
+        val mutableList = mutableListOf<Pair<TimerState, TimerState>>()
+
+        with(breathPatternStateHolder) {
+
+            mutableList.add(
+                Pair(
+                    TimerState(3, BreathStateEnum.READY),
+                    TimerState(inhaleDuration, BreathStateEnum.INHALE)
+                )
+            )
+
+            repeat(breathPatternStateHolder.repetitions) {
+                if(holdPostInhaleDuration != 0) {
+                    mutableList.add(
+                        Pair(
+                            TimerState(inhaleDuration, BreathStateEnum.INHALE),
+                            TimerState(holdPostInhaleDuration, BreathStateEnum.HOLD_POST_INHALE)
+                        )
+                    )
+                    mutableList.add(
+                        Pair(
+                            TimerState(holdPostInhaleDuration, BreathStateEnum.HOLD_POST_INHALE),
+                            TimerState(exhaleDuration, BreathStateEnum.EXHALE)
+                        )
+                    )
+                } else {
+                    mutableList.add(
+                        Pair(
+                            TimerState(inhaleDuration, BreathStateEnum.INHALE),
+                            TimerState(exhaleDuration, BreathStateEnum.EXHALE)
+                        )
+                    )
+                }
+
+                if(holdPostExhaleDuration != 0) {
+                    mutableList.add(
+                        Pair(
+                            TimerState(exhaleDuration, BreathStateEnum.EXHALE),
+                            TimerState(holdPostExhaleDuration, BreathStateEnum.HOLD_POST_EXHALE)
+                        )
+                    )
+                    if(it == breathPatternStateHolder.repetitions - 1) {
+                        mutableList.add(
+                            Pair(
+                                TimerState(holdPostExhaleDuration, BreathStateEnum.HOLD_POST_EXHALE),
+                                TimerState(0, BreathStateEnum.FINISHED)
+                            )
+                        )
+                    } else {
+                        mutableList.add(
+                            Pair(
+                                TimerState(holdPostExhaleDuration, BreathStateEnum.HOLD_POST_EXHALE),
+                                TimerState(inhaleDuration, BreathStateEnum.INHALE)
+                            )
+                        )
+                    }
+                } else {
+                    if (it == breathPatternStateHolder.repetitions - 1) {
+                        mutableList.add(
+                            Pair(
+                                TimerState(exhaleDuration, BreathStateEnum.EXHALE),
+                                TimerState(0, BreathStateEnum.FINISHED)
+                            )
+                        )
+                    } else {
+                        mutableList.add(
+                            Pair(
+                                TimerState(exhaleDuration, BreathStateEnum.EXHALE),
+                                TimerState(inhaleDuration, BreathStateEnum.INHALE)
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        mutableList.add(
+            Pair(
+                TimerState(0, BreathStateEnum.FINISHED),
+                TimerState(0, BreathStateEnum.FINISHED)
+            )
+        )
+
+        return mutableList.toList()
     }
 
     private fun buildTimerStateList(): List<TimerState> {
@@ -85,7 +172,7 @@ class BreathPageViewModel @Inject constructor(
         return mutableList.filterNot { it.currentDuration == 0 }
     }
 
-    private suspend fun timerStateFlowBuilder(value: List<TimerState>): Flow<TimerState> {
+    private suspend fun timerStateFlowBuilder(value: List<Pair<TimerState, TimerState>>): Flow<Pair<TimerState, TimerState>> {
         return flow {
             value.forEach {
                 // If session is paused, wait until not paused
@@ -93,7 +180,7 @@ class BreathPageViewModel @Inject constructor(
                 // If animation still running, wait until it is finished
                 if(isAnimationRunning.value) isAnimationRunning.first { isRun -> !isRun }
                 emit(it)
-                delay(it.currentDuration * 1000L)
+                delay(it.first.currentDuration * 1000L)
             }
         }
     }

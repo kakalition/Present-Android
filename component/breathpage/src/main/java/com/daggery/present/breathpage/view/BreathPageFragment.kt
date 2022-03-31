@@ -104,15 +104,16 @@ class BreathPageFragment : Fragment() {
                         else resumeAnimation()
                     }
                 }
-                Log.d("LOL first emit", viewModel.timerState.value.toString())
+
                 launch {
                     viewModel.timerState.collect {
-                        ensureActive()
                         Log.d("LOL EMIT", it.toString())
-                        viewBinding.currentStateText.text = it.currentState.toString()
-                        animateBackground(it)
-                        animatePlayButton(it)
-                        if (it.currentState == BreathStateEnum.FINISHED) cancel()
+                        viewBinding.currentStateText.text = it.first.currentState.toString()
+                        viewBinding.nextStateText.text = it.second.currentState.toString()
+                        if (it.first.currentState != BreathStateEnum.FINISHED) {
+                            animatePlayButton(it.first)
+                        }
+                        animateBackground(it.first)
                     }
                 }
             }
