@@ -22,10 +22,8 @@ import com.daggery.present.breathpage.viewmodel.BreathPageViewModel
 import com.daggery.present.breathpage.viewmodel.TimerState
 import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.ensureActive
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -76,16 +74,14 @@ class BreathPageFragment : Fragment() {
     }
 
     private val playBgOnClickListener: (v: View) -> Unit = {
-        if (viewModel.isPaused.value) {
-            viewModel.resume()
+        if (viewModel.isSessionPaused.value) {
+            viewModel.startSession()
         } else {
-            viewModel.pause()
+            viewModel.stopSession()
         }
 
         viewBinding.playButton.visibility = View.GONE
         viewBinding.timeCounter.visibility = View.VISIBLE
-
-        viewModel.startSession()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,7 +99,7 @@ class BreathPageFragment : Fragment() {
             // TODO: Check correct behavior
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.isPaused.collect {
+                    viewModel.isSessionPaused.collect {
                         if(it) {
                             pauseAnimation()
                         }
@@ -137,7 +133,6 @@ class BreathPageFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         Log.d("LOL", "onStop")
-        viewModel.pauseAnim()
         pauseAnimation()
     }
 
@@ -168,6 +163,7 @@ class BreathPageFragment : Fragment() {
         sizeAnimator?.resume()
         timeCounterAnimator.cancel()
     }
+
 
     private fun animateBackground(state: TimerState) {
         val background = viewBinding.baseLayout.background as GradientDrawable
@@ -255,11 +251,11 @@ class BreathPageFragment : Fragment() {
             }
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator?) {
-                    viewModel.startAnim()
+                    viewModel.changeRunningAnimationState(true)
                 }
                 override fun onAnimationEnd(animation: Animator?) {
                     viewBinding.timeCounter.text = "0"
-                    viewModel.pauseAnim()
+                    viewModel.changeRunningAnimationState(false)
                 }
             })
         }

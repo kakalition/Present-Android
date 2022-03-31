@@ -1,6 +1,5 @@
 package com.daggery.present.breathpage.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
@@ -32,56 +31,46 @@ class BreathPageViewModel @Inject constructor(
     private var _breathPatternStateHolder: BreathPatternStateHolder? = null
     val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 4, 4, 4, 4, 2)
 
-    private lateinit var timerEngine: TimerEngine
+
+    private lateinit var _timerStateFlow: Flow<TimerState>
     private var _timerState = MutableStateFlow(
         TimerState(1, BreathStateEnum.GROUND)
     )
     val timerState get() = _timerState.asStateFlow()
-    lateinit var timerStateFlow: Flow<TimerState>
-    private var totalDuration = 1
 
-    private var isSessionActive = true
-    private var _isPaused = MutableStateFlow(true)
-    val isPaused get() = _isPaused.asStateFlow()
+    private var _isSessionPaused = MutableStateFlow(true)
+    val isSessionPaused get() = _isSessionPaused.asStateFlow()
     private var isAnimationRunning = MutableStateFlow(false)
 
-    fun pause() {
+    // TODO: Implement
+    suspend fun resetSession() {
+        _timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
+    }
+
+    fun stopSession() {
         viewModelScope.launch {
-            _isPaused.emit(true)
+            _isSessionPaused.emit(true)
         }
     }
     
-    fun resume() {
+    fun startSession() {
         viewModelScope.launch {
-            _isPaused.emit(false)
+            _isSessionPaused.emit(false)
         }
     }
 
-    fun startAnim() {
+    fun changeRunningAnimationState(value: Boolean) {
         viewModelScope.launch {
-            isAnimationRunning.emit(true)
-        }
-    }
-
-    fun pauseAnim() {
-        viewModelScope.launch {
-            isAnimationRunning.emit(false)
+            isAnimationRunning.emit(value)
         }
     }
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
         if (breathPatternStateHolder != null) {
-            timerEngine = TimerEngine(breathPatternStateHolder)
-            //timerState = timerEngine.timerState
-            totalDuration = with(breathPatternStateHolder) {
-                return@with (inhaleDuration + holdPostInhaleDuration + exhaleDuration + holdPostExhaleDuration) * repetitions
-            }
-
-            timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
+            _timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
             viewModelScope.launch {
-                timerStateFlow.collect {
-                    Log.d("LOL emit", it.toString())
+                _timerStateFlow.collect {
                     _timerState.emit(it)
                 }
             }
@@ -111,22 +100,9 @@ class BreathPageViewModel @Inject constructor(
             value.forEach {
                 emit(it)
                 delay(it.currentDuration * 1000L)
-                if(isPaused.value) isPaused.first { isPaused -> !isPaused }
+                if(isSessionPaused.value) isSessionPaused.first { isPaused -> !isPaused }
                 if(isAnimationRunning.value) isAnimationRunning.first { isRun -> !isRun }
             }
         }
-    }
-
-    fun startSession() {
-        isSessionActive = true
-    }
-
-    fun stopSession() {
-        isSessionActive = false
-    }
-
-    suspend fun resetSession() {
-        isSessionActive = false
-        timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
     }
 }
