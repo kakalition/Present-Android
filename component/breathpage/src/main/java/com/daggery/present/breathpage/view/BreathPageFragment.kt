@@ -110,7 +110,8 @@ class BreathPageFragment : Fragment() {
                         Log.d("LOL EMIT", it.toString())
                         viewBinding.currentStateText.text = it.first.currentState.toString()
                         viewBinding.nextStateText.text = it.second.currentState.toString()
-                        if (it.first.currentState != BreathStateEnum.FINISHED) {
+                        if (it.first.currentState != BreathStateEnum.FINISHED &&
+                            it.first.currentState != BreathStateEnum.GROUND) {
                             animatePlayButton(it.first)
                         }
                         animateBackground(it.first)
