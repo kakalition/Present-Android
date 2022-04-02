@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.entities.BreathStateEnum
+import com.daggery.present.breathpage.entities.TimerState
+import com.daggery.present.breathpage.entities.TimerStatePairBuilder
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BreathPageViewModel @Inject constructor(
+    private val timerStatePairBuilder: TimerStatePairBuilder,
     private val mapper: BreathPatternStateHolderMapper,
     private val getBreathPatternItemByUuidUseCase: GetBreathPatternItemByUuidUseCase
 ): ViewModel() {
@@ -23,8 +26,8 @@ class BreathPageViewModel @Inject constructor(
 
     private lateinit var _timerStateFlow: Flow<Pair<TimerState, TimerState>>
     private var _timerState = MutableStateFlow(Pair(
-        TimerState(0, BreathStateEnum.GROUND),
-        TimerState(3, BreathStateEnum.READY)
+        TimerState(0, BreathStateEnum.GROUND, "Start"),
+        TimerState(3, BreathStateEnum.READY, "Ready (3)")
     ))
     val timerState get() = _timerState.asStateFlow()
 
@@ -73,10 +76,11 @@ class BreathPageViewModel @Inject constructor(
         with(breathPatternStateHolder) {
 
             mutableList.add(
-                Pair(
-                    TimerState(3, BreathStateEnum.READY),
-                    TimerState(inhaleDuration, BreathStateEnum.INHALE)
-                )
+                timerStatePairBuilder.setFirstDuration(3)
+                    .setFirstState(BreathStateEnum.READY)
+                    .setSecondDuration(inhaleDuration)
+                    .setSecondState(BreathStateEnum.INHALE)
+                    .build()
             )
 
             repeat(breathPatternStateHolder.repetitions) {
@@ -169,7 +173,7 @@ class BreathPageViewModel @Inject constructor(
         }
         mutableList.add(TimerState(1, BreathStateEnum.FINISHED))
 
-        return mutableList.filterNot { it.currentDuration == 0 }
+        return mutableList.filterNot { it.duration == 0 }
     }
 
     private suspend fun timerStateFlowBuilder(value: List<Pair<TimerState, TimerState>>): Flow<Pair<TimerState, TimerState>> {
@@ -180,7 +184,7 @@ class BreathPageViewModel @Inject constructor(
                 // If animation still running, wait until it is finished
                 if(isAnimationRunning.value) isAnimationRunning.first { isRun -> !isRun }
                 emit(it)
-                delay(it.first.currentDuration * 1000L)
+                delay(it.first.duration * 1000L)
             }
         }
     }

@@ -18,12 +18,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.daggery.present.sharedassets.R
 import com.daggery.present.breathpage.databinding.FragmentBreathPageBinding
 import com.daggery.present.breathpage.entities.BreathStateEnum
+import com.daggery.present.breathpage.entities.TimerState
 import com.daggery.present.breathpage.viewmodel.BreathPageViewModel
 import com.daggery.present.breathpage.viewmodel.TimerState
 import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -106,15 +105,15 @@ class BreathPageFragment : Fragment() {
                 }
 
                 launch {
-                    viewModel.timerState.collect {
-                        Log.d("LOL EMIT", it.toString())
-                        viewBinding.currentStateText.text = it.first.currentState.toString()
-                        viewBinding.nextStateText.text = it.second.currentState.toString()
-                        if (it.first.currentState != BreathStateEnum.FINISHED &&
-                            it.first.currentState != BreathStateEnum.GROUND) {
-                            animatePlayButton(it.first)
+                    viewModel.timerState.collect { state ->
+                        Log.d("LOL EMIT", state.toString())
+                        viewBinding.currentStateText.text = state.first.state.toString().lowercase().replaceFirstChar { it.uppercase() }
+                        viewBinding.nextStateText.text = "${state.second.state.toString().lowercase().replaceFirstChar { it.uppercase() }} (${state.second.duration})"
+                        if (state.first.state != BreathStateEnum.FINISHED &&
+                            state.first.state != BreathStateEnum.GROUND) {
+                            animatePlayButton(state.first)
                         }
-                        animateBackground(it.first)
+                        animateBackground(state.first)
                     }
                 }
             }
