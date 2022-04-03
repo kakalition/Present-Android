@@ -10,7 +10,9 @@ import com.daggery.present.breathpage.helper.TimerStatePairListBuilder
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,6 +25,7 @@ class BreathPageViewModel @Inject constructor(
 ): ViewModel() {
 
     private var _breathPatternStateHolder: BreathPatternStateHolder? = null
+    // TODO: Fix Bug (Error when hold is zero)
     val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 2, 1, 2, 1, 2)
 
     private lateinit var _timerStateFlow: Flow<Pair<TimerState, TimerState>>
@@ -36,9 +39,19 @@ class BreathPageViewModel @Inject constructor(
     val isSessionPaused get() = _isSessionPaused.asStateFlow()
     private var isAnimationRunning = MutableStateFlow(false)
 
-    // TODO: Implement
-    suspend fun resetSession() {
-        //_timerStateFlow = timerStateFlowBuilder(buildTimerStateList())
+    private var collectJob: Job? = null
+
+    fun resetSession() {
+        viewModelScope.launch {
+            _timerState.emit(Pair(
+                TimerState(0, BreathStateEnum.GROUND, "Start"),
+                TimerState(3, BreathStateEnum.READY, "Ready (3)")
+            ))
+            _isSessionPaused.emit(true)
+            isAnimationRunning.emit(false)
+            collectJob?.cancel()
+            collectJob = collectTimerState()
+        }
     }
 
     fun stopSession() {
@@ -66,10 +79,15 @@ class BreathPageViewModel @Inject constructor(
                 .setStateHolder(breathPatternStateHolder)
                 .build()
             _timerStateFlow = timerStateFlowBuilder(listValue)
-            viewModelScope.launch {
-                _timerStateFlow.collect {
-                    _timerState.emit(it)
-                }
+            collectJob = collectTimerState()
+        }
+    }
+
+    private fun collectTimerState(): Job {
+        return viewModelScope.launch {
+            _timerStateFlow.collect {
+                ensureActive()
+                _timerState.emit(it)
             }
         }
     }

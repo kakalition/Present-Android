@@ -1,6 +1,7 @@
 package com.daggery.present.breathpage.view
 
 import android.animation.*
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -23,6 +24,10 @@ import com.daggery.present.breathpage.viewmodel.BreathPageViewModel
 import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
+
+// Getting value from viewBinding should be divided by density
+// Setting value to viewBinding should be multiplied by density
 
 @AndroidEntryPoint
 class BreathPageFragment : Fragment() {
@@ -57,6 +62,14 @@ class BreathPageFragment : Fragment() {
         })
     }
 
+    private fun Int.toViewBinding(): Int {
+        return this * requireContext().resources.displayMetrics.density.roundToInt()
+    }
+
+    private fun Int.fromViewBinding(): Int {
+        return this / requireContext().resources.displayMetrics.density.roundToInt()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         breathPatternUuid = arguments?.getString(BundleKeys.BREATH_PATTERN_UUID)
@@ -82,10 +95,19 @@ class BreathPageFragment : Fragment() {
         viewBinding.timeCounter.visibility = View.VISIBLE
     }
 
+    private val restartOnClickListener: (v: View) -> Unit = {
+        viewBinding.playButton.visibility = View.VISIBLE
+        viewBinding.timeCounter.visibility = View.GONE
+        viewModel.stopSession()
+        restartAnimation()
+        viewModel.resetSession()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         Log.d("LOL", "onViewCreated")
+        Log.d("LOL density", requireContext().resources.displayMetrics.density.toString())
 
         viewLifecycleOwner.lifecycleScope.launch {
 
@@ -93,6 +115,7 @@ class BreathPageFragment : Fragment() {
             bindsState()
 
             viewBinding.playBg.setOnClickListener(playBgOnClickListener)
+            viewBinding.restartButton.setOnClickListener(restartOnClickListener)
 
             // TODO: Check correct behavior
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -106,8 +129,8 @@ class BreathPageFragment : Fragment() {
                 launch {
                     viewModel.timerState.collect { state ->
                         Log.d("LOL EMIT", state.toString())
-                        viewBinding.currentStateText.text = state.first.state.toString().lowercase().replaceFirstChar { it.uppercase() }
-                        viewBinding.nextStateText.text = "${state.second.state.toString().lowercase().replaceFirstChar { it.uppercase() }} (${state.second.duration})"
+                        viewBinding.currentStateText.text = state.first.displayName
+                        viewBinding.nextStateText.text = state.second.displayName
                         if (state.first.state != BreathStateEnum.FINISHED &&
                             state.first.state != BreathStateEnum.GROUND) {
                             animatePlayButton(state.first)
@@ -163,6 +186,23 @@ class BreathPageFragment : Fragment() {
         timeCounterAnimator.cancel()
     }
 
+    private fun restartAnimation() {
+        pauseAnimation()
+        sizeAnimator = ValueAnimator.ofInt(viewBinding.playBg.width.fromViewBinding(), 250)
+        ?.apply {
+            duration = 500
+            interpolator = DecelerateInterpolator()
+            addUpdateListener {
+                val value = (animatedValue as Int) * requireContext().resources.displayMetrics.density
+                val params = viewBinding.playBg.layoutParams.apply {
+                    height = value.toInt()
+                    width = value.toInt()
+                }
+                viewBinding.playBg.layoutParams = params
+            }
+        }
+        sizeAnimator?.start()
+    }
 
     private fun animateBackground(timerState: TimerState) {
         val background = viewBinding.baseLayout.background as GradientDrawable
@@ -271,10 +311,10 @@ class BreathPageFragment : Fragment() {
             duration = timerState.duration * 1000L
             interpolator = DecelerateInterpolator()
             addUpdateListener {
-                val value = (animatedValue as Int) * requireContext().resources.displayMetrics.density
+                val value = (animatedValue as Int).toViewBinding()
                 val params = viewBinding.playBg.layoutParams.apply {
-                    height = value.toInt()
-                    width = value.toInt()
+                    height = value
+                    width = value
                 }
                 viewBinding.playBg.layoutParams = params
             }

@@ -44,7 +44,7 @@ class TimerStatePairBuilder @Inject constructor(){
 
     fun build(): Pair<TimerState, TimerState> {
         val firstDisplayName = firstState.toString().lowercase().replaceFirstChar { it.uppercase() }
-        val secondDisplayName = "${secondState.toString().lowercase().replaceFirstChar { it.uppercase() }} ${secondDuration})"
+        val secondDisplayName = "${secondState.toString().lowercase().replaceFirstChar { it.uppercase() }} (${secondDuration})"
 
         val pair = Pair(
             TimerState(firstDuration, firstState, firstDisplayName),
