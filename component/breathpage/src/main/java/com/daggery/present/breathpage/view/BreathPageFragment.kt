@@ -79,16 +79,17 @@ class BreathPageFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("LOL", "onCreateView")
         _viewBinding = FragmentBreathPageBinding.inflate(inflater, container, false)
         return viewBinding.root
     }
 
     private val playBgOnClickListener: (v: View) -> Unit = {
-        if (viewModel.isSessionPaused.value) {
-            viewModel.startSession()
-        } else {
-            viewModel.stopSession()
+        if (viewModel.timerState.value.first.state != BreathStateEnum.FINISHED) {
+            if (viewModel.isSessionPaused.value) {
+                viewModel.startSession()
+            } else {
+                viewModel.stopSession()
+            }
         }
 
         viewBinding.playButton.visibility = View.GONE
@@ -106,9 +107,6 @@ class BreathPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("LOL", "onViewCreated")
-        Log.d("LOL density", requireContext().resources.displayMetrics.density.toString())
-
         viewLifecycleOwner.lifecycleScope.launch {
 
             viewModel.getBreathPatternStateHolder(breathPatternUuid ?: "")
@@ -117,7 +115,6 @@ class BreathPageFragment : Fragment() {
             viewBinding.playBg.setOnClickListener(playBgOnClickListener)
             viewBinding.restartButton.setOnClickListener(restartOnClickListener)
 
-            // TODO: Check correct behavior
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.isSessionPaused.collect {
@@ -131,8 +128,8 @@ class BreathPageFragment : Fragment() {
                         Log.d("LOL EMIT", state.toString())
                         viewBinding.currentStateText.text = state.first.displayName
                         viewBinding.nextStateText.text = state.second.displayName
-                        if (state.first.state != BreathStateEnum.FINISHED &&
-                            state.first.state != BreathStateEnum.GROUND) {
+                        if (state.first.state != BreathStateEnum.GROUND &&
+                            state.first.state != BreathStateEnum.FINISHED) {
                             animatePlayButton(state.first)
                         }
                         animateBackground(state.first)
@@ -140,34 +137,6 @@ class BreathPageFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("LOL", "onStart")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("LOL", "onPaise")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("LOL", "onStop")
-        pauseAnimation()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d("LOL", "onDestroy")
-    }
-
-    private fun startAnimation() {
-        gradientOneAnimator?.start()
-        gradientTwoAnimator?.start()
-        timeAnimator?.start()
-        sizeAnimator?.start()
     }
 
     private fun pauseAnimation() {

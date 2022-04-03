@@ -47,7 +47,6 @@ class TimerStatePairBuilder @Inject constructor(){
         return this
     }
 
-    // TODO: Implement below method
     private fun formatDisplayName(state: BreathStateEnum, position: Position, withDuration: Boolean): String {
         var formattedName = ""
         formattedName += when(state) {
