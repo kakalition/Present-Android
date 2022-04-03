@@ -7,7 +7,6 @@ plugins {
 
 dependencies {
     implementation(project(Modules.domain))
-
     addRoom()
 }
 

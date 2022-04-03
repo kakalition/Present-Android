@@ -1,6 +1,7 @@
 package com.daggery.present.data.repositories
 
 import com.daggery.present.data.db.IBreathPatternDao
+import com.daggery.present.data.di.CoroutineDispatcherModule.IoDispatcher
 import com.daggery.present.data.mappers.BreathPatternItemEntityMapper
 import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.domain.repositories.BreathPatternRepository
@@ -12,7 +13,7 @@ import javax.inject.Inject
 
 internal class BreathPatternLocalDataSource @Inject constructor(
     private val dao: IBreathPatternDao,
-    private val coroutineDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
     private val mapper: BreathPatternItemEntityMapper
 ) : BreathPatternRepository {
 

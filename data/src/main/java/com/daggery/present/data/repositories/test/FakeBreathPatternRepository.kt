@@ -21,7 +21,8 @@ class FakeBreathPatternRepository : BreathPatternRepository{
     }
 
     override suspend fun getBreathPatternItemByUuid(uuid: String): BreathPatternItem? {
-        return breathPatternFlow.value.singleOrNull { it.uuid == uuid }
+        val value = breathPatternFlow.value.singleOrNull { it.uuid == uuid }
+        return value
     }
 
     override suspend fun addBreathPattern(value: BreathPatternItem) {

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="surfaceColor">#FBF3FF</color>
+    <color name="onSurfaceColor">#000000</color>
+    <color name="primaryColor">#F1DAFF</color>
+    <color name="onPrimaryColor">#000000</color>
+    <color name="secondaryColor">#A020F0</color>
+    <color name="onSecondaryColor">#FFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00FFFFFF</color>
+
+    <color name="purple_one">#A020F0</color>
+    <color name="purple_two">#D38CFF</color>
+    <color name="blue_one">#5433FF</color>
+    <color name="blue_two">#20BDFF</color>
+    <color name="orange_one">#FF5F6D</color>
+    <color name="orange_two">#FFC371</color>
+    <color name="green_one">#3BB98C</color>
+    <color name="green_two">#76FFA9</color>
+</resources>
