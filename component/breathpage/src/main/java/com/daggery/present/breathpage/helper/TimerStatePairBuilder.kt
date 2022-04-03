@@ -9,6 +9,11 @@ data class TimerState(
     val displayName: String
 )
 
+private enum class Position {
+    FIRST,
+    SECOND
+}
+
 class TimerStatePairBuilder @Inject constructor(){
     private var firstDuration: Int = 0
     private var firstState: BreathStateEnum = BreathStateEnum.GROUND
@@ -42,9 +47,28 @@ class TimerStatePairBuilder @Inject constructor(){
         return this
     }
 
+    // TODO: Implement below method
+    private fun formatDisplayName(state: BreathStateEnum, position: Position, withDuration: Boolean): String {
+        var formattedName = ""
+        formattedName += when(state) {
+            BreathStateEnum.GROUND -> ""
+            BreathStateEnum.READY -> "Ready "
+            BreathStateEnum.INHALE -> "Inhale "
+            BreathStateEnum.HOLD_POST_INHALE -> "Hold "
+            BreathStateEnum.EXHALE -> "Exhale "
+            BreathStateEnum.HOLD_POST_EXHALE -> "Hold "
+            BreathStateEnum.FINISHED -> "Finish "
+        }
+        if(withDuration) {
+            if(position == Position.FIRST) formattedName += "(${firstDuration})"
+             else formattedName += "(${secondDuration})"
+        }
+        return formattedName
+    }
+
     fun build(): Pair<TimerState, TimerState> {
-        val firstDisplayName = firstState.toString().lowercase().replaceFirstChar { it.uppercase() }
-        val secondDisplayName = "${secondState.toString().lowercase().replaceFirstChar { it.uppercase() }} (${secondDuration})"
+        val firstDisplayName = formatDisplayName(firstState, Position.FIRST, false)
+        val secondDisplayName = formatDisplayName(secondState, Position.SECOND, true)
 
         val pair = Pair(
             TimerState(firstDuration, firstState, firstDisplayName),
