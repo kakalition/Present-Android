@@ -30,8 +30,8 @@ class TimerStatePairListBuilder @Inject constructor(
             }
             BreathStateEnum.HOLD_POST_INHALE -> BreathStateEnum.EXHALE
             BreathStateEnum.EXHALE -> {
-                return if(stateHolder.exhaleDuration != 0) BreathStateEnum.HOLD_POST_EXHALE
-                else if(stateHolder.exhaleDuration == 0 && repeat) BreathStateEnum.INHALE
+                return if(stateHolder.holdPostExhaleDuration != 0) BreathStateEnum.HOLD_POST_EXHALE
+                else if(stateHolder.holdPostExhaleDuration == 0 && repeat) BreathStateEnum.INHALE
                 //else if(stateHolder.exhaleDuration == 0 && !repeat) BreathStateEnum.FINISHED
                 else BreathStateEnum.FINISHED
             }

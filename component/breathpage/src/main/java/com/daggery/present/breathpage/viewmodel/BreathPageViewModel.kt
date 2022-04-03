@@ -25,8 +25,7 @@ class BreathPageViewModel @Inject constructor(
 ): ViewModel() {
 
     private var _breathPatternStateHolder: BreathPatternStateHolder? = null
-    // TODO: Fix Bug (Error when hold is zero)
-    val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 2, 1, 2, 1, 2)
+    val breathPatternStateHolder get() = BreathPatternStateHolder("0", "Box Breathing", 1, 2, 0, 2, 0, 2)
 
     private lateinit var _timerStateFlow: Flow<Pair<TimerState, TimerState>>
     private var _timerState = MutableStateFlow(Pair(
