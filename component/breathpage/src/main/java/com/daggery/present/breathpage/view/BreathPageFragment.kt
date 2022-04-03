@@ -26,9 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
-// Getting value from viewBinding should be divided by density
-// Setting value to viewBinding should be multiplied by density
-
+// TODO: Issue: Size value gotten from viewBinding is off by 50dp
 @AndroidEntryPoint
 class BreathPageFragment : Fragment() {
 
@@ -125,7 +123,6 @@ class BreathPageFragment : Fragment() {
 
                 launch {
                     viewModel.timerState.collect { state ->
-                        Log.d("LOL EMIT", state.toString())
                         viewBinding.currentStateText.text = state.first.displayName
                         viewBinding.nextStateText.text = state.second.displayName
                         if (state.first.state != BreathStateEnum.GROUND &&
@@ -269,12 +266,10 @@ class BreathPageFragment : Fragment() {
         }
 
         sizeAnimator = when(timerState.state) {
-            BreathStateEnum.INHALE -> {
-                ValueAnimator.ofInt(150, 250)
-            }
-            BreathStateEnum.EXHALE -> {
-                ValueAnimator.ofInt(250, 150)
-            }
+            BreathStateEnum.READY -> ValueAnimator.ofInt(viewBinding.playBg.width.fromViewBinding(), 150)
+            BreathStateEnum.INHALE -> ValueAnimator.ofInt(150, 250)
+            BreathStateEnum.EXHALE -> ValueAnimator.ofInt(250, 150)
+
             else -> null
         }?.apply {
             duration = timerState.duration * 1000L
