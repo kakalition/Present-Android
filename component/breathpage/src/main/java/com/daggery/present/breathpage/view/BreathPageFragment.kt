@@ -18,9 +18,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.daggery.present.sharedassets.R
 import com.daggery.present.breathpage.databinding.FragmentBreathPageBinding
 import com.daggery.present.breathpage.entities.BreathStateEnum
-import com.daggery.present.breathpage.entities.TimerState
+import com.daggery.present.breathpage.helper.TimerState
 import com.daggery.present.breathpage.viewmodel.BreathPageViewModel
-import com.daggery.present.breathpage.viewmodel.TimerState
 import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -165,9 +164,9 @@ class BreathPageFragment : Fragment() {
     }
 
 
-    private fun animateBackground(state: TimerState) {
+    private fun animateBackground(timerState: TimerState) {
         val background = viewBinding.baseLayout.background as GradientDrawable
-        val gradientPair = createGradientPair(state.currentState)
+        val gradientPair = createGradientPair(timerState.state)
 
         background.colors?.let {
             gradientOneAnimator = ValueAnimator.ofArgb(it[0], gradientPair.first)
@@ -243,8 +242,8 @@ class BreathPageFragment : Fragment() {
     }
 
     private fun animatePlayButton(timerState: TimerState) {
-        timeAnimator = ValueAnimator.ofInt(timerState.currentDuration, 0).apply {
-            duration = (timerState.currentDuration * 1000L) - 150
+        timeAnimator = ValueAnimator.ofInt(timerState.duration, 0).apply {
+            duration = (timerState.duration * 1000L) - 150
             interpolator = LinearInterpolator()
             addUpdateListener {
                 viewBinding.timeCounter.text = it.animatedValue.toString()
@@ -260,7 +259,7 @@ class BreathPageFragment : Fragment() {
             })
         }
 
-        sizeAnimator = when(timerState.currentState) {
+        sizeAnimator = when(timerState.state) {
             BreathStateEnum.INHALE -> {
                 ValueAnimator.ofInt(150, 250)
             }
@@ -269,7 +268,7 @@ class BreathPageFragment : Fragment() {
             }
             else -> null
         }?.apply {
-            duration = timerState.currentDuration * 1000L
+            duration = timerState.duration * 1000L
             interpolator = DecelerateInterpolator()
             addUpdateListener {
                 val value = (animatedValue as Int) * requireContext().resources.displayMetrics.density

@@ -1,5 +1,6 @@
-package com.daggery.present.breathpage.entities
+package com.daggery.present.breathpage.helper
 
+import com.daggery.present.breathpage.entities.BreathStateEnum
 import javax.inject.Inject
 
 data class TimerState(

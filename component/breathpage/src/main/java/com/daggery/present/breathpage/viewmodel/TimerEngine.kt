@@ -2,7 +2,7 @@ package com.daggery.present.breathpage.viewmodel
 
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.entities.BreathStateEnum
-import com.daggery.present.breathpage.entities.TimerState
+import com.daggery.present.breathpage.helper.TimerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
