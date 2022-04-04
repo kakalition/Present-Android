@@ -5,10 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.entities.BreathStateEnum
 import com.daggery.present.breathpage.helper.TimerState
-import com.daggery.present.breathpage.helper.TimerStatePairBuilder
 import com.daggery.present.breathpage.helper.TimerStatePairListBuilder
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
-import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
+import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemByUuidUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

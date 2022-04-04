@@ -1,4 +1,4 @@
-package com.daggery.present.data.usecases
+package com.daggery.present.data.usecases.breathpattern
 
 import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.domain.repositories.BreathPatternRepository
