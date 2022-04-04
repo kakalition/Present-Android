@@ -12,9 +12,39 @@ class PatternListAdapter :
     ListAdapter<BreathPatternItem, PatternListAdapter.PatternItemViewHolder>(PatternItemDiffer()) {
 
     class PatternItemViewHolder(private val binding: TilePatternBinding) : RecyclerView.ViewHolder(binding.root) {
+
         fun bind(value: BreathPatternItem) {
             with(binding) {
+                textPatternName.text = value.name
+                textTempo.text = formatTempo(value)
+                textRepetition.text = value.repetitions.toString()
+                textDuration.text = getDuration(value)
             }
+        }
+
+        private fun formatTempo(value: BreathPatternItem): String {
+            var tempo = ""
+            with(value) {
+                tempo += inhaleDuration
+                tempo += "-"
+                tempo += holdPostInhaleDuration
+                tempo += "-"
+                tempo += exhaleDuration
+                tempo += "-"
+                tempo += holdPostExhaleDuration
+            }
+            return tempo
+        }
+
+        private fun getDuration(value: BreathPatternItem): String {
+            var duration = 0
+            repeat(value.repetitions) {
+                duration += value.inhaleDuration
+                duration += value.holdPostInhaleDuration
+                duration += value.exhaleDuration
+                duration += value.holdPostExhaleDuration
+            }
+            return duration.toString()
         }
     }
 
