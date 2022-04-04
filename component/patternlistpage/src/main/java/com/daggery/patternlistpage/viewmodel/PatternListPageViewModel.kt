@@ -1,8 +1,50 @@
 package com.daggery.patternlistpage.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.daggery.patternlistpage.entities.PatternListState
+import com.daggery.present.data.usecases.DeleteBreathPatternUseCase
+import com.daggery.present.data.usecases.GetBreathPatternItemsFlowUseCase
+import com.daggery.present.domain.entities.BreathPatternItem
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PatternListPageViewModel @Inject constructor() : ViewModel() {
+@HiltViewModel
+class PatternListPageViewModel @Inject constructor(
+    private val getBreathPatternItemsFlowUseCase: GetBreathPatternItemsFlowUseCase,
+    private val deleteBreathPatternUseCase: DeleteBreathPatternUseCase,
 
+) : ViewModel() {
+
+    private var _patternListState = MutableStateFlow<PatternListState>(PatternListState.Loading)
+    val patternListState get() = _patternListState.asStateFlow()
+
+    private var _isOffScreen = MutableStateFlow(true)
+    private val isOffScreen get() = _isOffScreen.asStateFlow()
+
+    fun changeScreenState(value: Boolean) {
+        viewModelScope.launch {
+            _isOffScreen.emit(value)
+        }
+    }
+
+    fun deletePattern(value: BreathPatternItem) {
+        viewModelScope.launch {
+            deleteBreathPatternUseCase(value)
+        }
+    }
+
+    fun collectState() {
+        viewModelScope.launch {
+            getBreathPatternItemsFlowUseCase().collect {
+                if (isOffScreen.value) isOffScreen.first { isOffScreen -> !isOffScreen }
+                _patternListState.emit(PatternListState.Result(it))
+            }
+        }
+    }
 }
