@@ -27,6 +27,9 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 // TODO: Issue: Size value gotten from viewBinding is off by 50dp
+// TODO: Ambient Music
+// TODO: TTS Instruction
+
 @AndroidEntryPoint
 class BreathPageFragment : Fragment() {
 
