@@ -45,6 +45,7 @@ class CommonPlugin : Plugin<Project> {
 
                 with(project) {
                     addAndroidCore()
+                    addLifecycle()
                     addCoroutineCore()
                     addHilt()
 

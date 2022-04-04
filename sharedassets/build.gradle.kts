@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-
     addAndroidCore()
     addNavigation()
+    addCoroutineCore()
 }

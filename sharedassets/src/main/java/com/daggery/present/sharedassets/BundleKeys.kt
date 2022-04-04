@@ -2,6 +2,6 @@ package com.daggery.present.sharedassets
 
 class BundleKeys {
     companion object {
-        val BREATH_PATTERN_UUID = "BREATH_PATTERN_UUID"
+        const val PATTERN_UUID = "PATTERN_UUID"
     }
 }

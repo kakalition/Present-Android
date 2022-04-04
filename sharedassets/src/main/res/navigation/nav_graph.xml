@@ -2,11 +2,16 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/breath_page_fragment">
+    app:startDestination="@id/pattern_list_fragment">
 
     <fragment
         android:id="@+id/breath_page_fragment"
         android:name="com.daggery.present.breathpage.view.BreathPageFragment"
         android:label="Breath Page" />
+
+    <fragment
+        android:id="@+id/pattern_list_fragment"
+        android:name="com.daggery.patternlistpage.view.PatternListFragment"
+        android:label="Pattern List Fragment" />
 
 </navigation>

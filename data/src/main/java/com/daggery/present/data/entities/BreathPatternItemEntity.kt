@@ -14,5 +14,4 @@ data class BreathPatternItemEntity(
     @ColumnInfo(name = "exhale_duration") val exhaleDuration: Int,
     @ColumnInfo(name = "hold_after_duration") val holdPostExhaleDuration: Int,
     @ColumnInfo(name = "repetitions") val repetitions: Int
-
 )

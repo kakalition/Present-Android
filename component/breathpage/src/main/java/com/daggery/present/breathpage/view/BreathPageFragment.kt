@@ -1,11 +1,9 @@
 package com.daggery.present.breathpage.view
 
 import android.animation.*
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +25,9 @@ import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 // TODO: Issue: Size value gotten from viewBinding is off by 50dp
+// TODO: Ambient Music
+// TODO: TTS Instruction
+
 @AndroidEntryPoint
 class BreathPageFragment : Fragment() {
 
@@ -70,7 +71,7 @@ class BreathPageFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        breathPatternUuid = arguments?.getString(BundleKeys.BREATH_PATTERN_UUID)
+        breathPatternUuid = arguments?.getString(BundleKeys.PATTERN_UUID)
     }
 
     override fun onCreateView(

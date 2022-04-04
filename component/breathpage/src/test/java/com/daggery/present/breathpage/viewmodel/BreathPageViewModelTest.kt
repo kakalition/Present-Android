@@ -2,6 +2,9 @@ package com.daggery.present.breathpage.viewmodel
 
 import com.daggery.present.breathpage.entities.BreathPatternStateHolder
 import com.daggery.present.breathpage.entities.BreathStateEnum
+import com.daggery.present.breathpage.helper.TimerState
+import com.daggery.present.breathpage.helper.TimerStatePairBuilder
+import com.daggery.present.breathpage.helper.TimerStatePairListBuilder
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
 import com.daggery.present.domain.entities.BreathPatternItem
@@ -19,9 +22,10 @@ internal class BreathPageViewModelTest @Inject constructor(
 
     describe("BreathPage ViewModel Test") {
         val repository = FakeBreathPatternRepository()
+        val timerStateBuilder = TimerStatePairListBuilder(TimerStatePairBuilder())
         val mapper = BreathPatternStateHolderMapper()
         val getBreathPatternItemByUuid = GetBreathPatternItemByUuidUseCase(repository)
-        val sut = BreathPageViewModel(mapper, getBreathPatternItemByUuid)
+        val sut = BreathPageViewModel(timerStateBuilder, mapper, getBreathPatternItemByUuid)
 
         val uuidOne = "1"
         val valueOne =
