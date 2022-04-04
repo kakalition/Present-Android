@@ -13,7 +13,7 @@ internal interface BreathPatternDao : IBreathPatternDao {
     @Query("SELECT * FROM breath_pattern ORDER BY name DESC")
     override suspend fun getBreathPatternItemEntities(): List<BreathPatternItemEntity>
 
-    @Query("SELECT * FROM breath_pattern WHERE name = :uuid")
+    @Query("SELECT * FROM breath_pattern WHERE uuid = :uuid")
     override suspend fun getBreathPatternItemEntityByUuid(uuid: String): BreathPatternItemEntity?
 
     @Insert

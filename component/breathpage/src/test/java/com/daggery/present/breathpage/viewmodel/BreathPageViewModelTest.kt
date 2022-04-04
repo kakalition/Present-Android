@@ -8,7 +8,7 @@ import com.daggery.present.breathpage.helper.TimerStatePairListBuilder
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
 import com.daggery.present.domain.entities.BreathPatternItem
-import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
+import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemByUuidUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions

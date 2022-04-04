@@ -5,11 +5,13 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.daggery.present.data.entities.BreathPatternItemEntity
+import com.daggery.present.data.entities.NotificationItemEntity
 
-@Database(entities = [BreathPatternItemEntity::class], version = 1, exportSchema = true)
+@Database(entities = [BreathPatternItemEntity::class, NotificationItemEntity::class], version = 1, exportSchema = true)
 internal abstract class PresentDatabase : RoomDatabase() {
 
     abstract fun getBreathPatternDao(): BreathPatternDao
+    abstract fun getNotificationItemDao(): NotificationItemDao
 
     companion object {
         @Volatile

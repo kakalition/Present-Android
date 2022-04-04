@@ -2,10 +2,10 @@ package com.daggery.patternlistpage.viewmodel
 
 import com.daggery.patternlistpage.entities.PatternListState
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
-import com.daggery.present.data.usecases.DeleteBreathPatternUseCase
-import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
-import com.daggery.present.data.usecases.GetBreathPatternItemsFlowUseCase
-import com.daggery.present.data.usecases.UpdateBreathPatternUseCase
+import com.daggery.present.data.usecases.breathpattern.DeleteBreathPatternUseCase
+import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemByUuidUseCase
+import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemsFlowUseCase
+import com.daggery.present.data.usecases.breathpattern.UpdateBreathPatternUseCase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
 import org.junit.jupiter.api.Assertions
