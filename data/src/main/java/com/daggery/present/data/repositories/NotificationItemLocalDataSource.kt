@@ -32,10 +32,9 @@ internal class NotificationItemLocalDataSource @Inject constructor(
     override suspend fun getNotificationByUuid(uuid: String): NotificationItem? {
         return withContext(coroutineDispatcher) {
             val value = dao.getNotificationByUuid(uuid)
-            value?.let {
-                return@withContext mapper.toNotificationItem(it)
-            }
-            return@withContext null
+
+            if(value == null) { null }
+            else { mapper.toNotificationItem(value) }
         }
     }
 

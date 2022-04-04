@@ -8,6 +8,7 @@ import javax.inject.Inject
 internal class BreathPatternRepositoryImpl @Inject constructor(
     private val localDataSource: BreathPatternLocalDataSource
 ) : BreathPatternRepository {
+
     override fun getBreathPatternItemsFlow(): Flow<List<BreathPatternItem>> {
         return localDataSource.getBreathPatternItemsFlow()
     }

@@ -11,6 +11,7 @@ import com.daggery.present.data.entities.NotificationItemEntity
 internal abstract class PresentDatabase : RoomDatabase() {
 
     abstract fun getBreathPatternDao(): BreathPatternDao
+    abstract fun getNotificationItemDao(): NotificationItemDao
 
     companion object {
         @Volatile
