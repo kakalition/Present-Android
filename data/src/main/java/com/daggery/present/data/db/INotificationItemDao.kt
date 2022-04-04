@@ -3,7 +3,7 @@ package com.daggery.present.data.db
 import com.daggery.present.domain.entities.NotificationItem
 import kotlinx.coroutines.flow.Flow
 
-interface INotificationItemDao {
+internal interface INotificationItemDao {
 
     fun getNotificationsFlow(): Flow<List<NotificationItem>>
 

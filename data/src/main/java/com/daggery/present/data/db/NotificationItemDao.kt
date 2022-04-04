@@ -5,7 +5,7 @@ import com.daggery.present.domain.entities.NotificationItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface NotificationItemDao : INotificationItemDao {
+internal interface NotificationItemDao : INotificationItemDao {
 
     @Query("SELECT * FROM notification_item ORDER BY hour DESC")
     override fun getNotificationsFlow(): Flow<List<NotificationItem>>
