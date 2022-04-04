@@ -24,7 +24,11 @@ class PatternListFragment : Fragment() {
 
     private val viewModel: PatternListPageViewModel by activityViewModels()
 
-    private val patternListAdapter = PatternListAdapter { showModal() }
+    private val patternListAdapter = PatternListAdapter { uuid -> showModal(uuid) }
+
+    companion object {
+        const val UUID_KEY = "UUID_KEY"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,8 +71,11 @@ class PatternListFragment : Fragment() {
         viewBinding.patternRecyclerView.adapter = patternListAdapter
     }
 
-    private fun showModal() {
+    private fun showModal(uuid: String) {
         val modal = PatternModalSheetFragment()
+        val bundle = Bundle()
+        bundle.putString(UUID_KEY, uuid)
+        modal.arguments = bundle
         modal.show(childFragmentManager, PatternModalSheetFragment.TAG)
     }
 }

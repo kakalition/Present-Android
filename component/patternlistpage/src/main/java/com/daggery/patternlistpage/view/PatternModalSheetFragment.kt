@@ -6,9 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import com.daggery.patternlistpage.databinding.FragmentPatternModalSheetListDialogBinding
 import com.daggery.patternlistpage.viewmodel.PatternListPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PatternModalSheetFragment : BottomSheetDialogFragment() {
@@ -28,24 +30,13 @@ class PatternModalSheetFragment : BottomSheetDialogFragment() {
     ): View {
         _viewBinding = FragmentPatternModalSheetListDialogBinding.inflate(inflater, container, false)
         return viewBinding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewBinding.textInstanceName.text = viewModel.getPattern(arguments?.getString(PatternListFragment.UUID_KEY) ?: "")?.name
+        }
     }
-
-/*
-    companion object {
-        fun newInstance(itemCount: Int): PatternModalSheetFragment =
-            PatternModalSheetFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_ITEM_COUNT, itemCount)
-                }
-            }
-
-    }
-*/
 
     override fun onDestroyView() {
         super.onDestroyView()

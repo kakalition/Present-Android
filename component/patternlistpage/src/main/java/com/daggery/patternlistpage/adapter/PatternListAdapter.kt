@@ -9,7 +9,7 @@ import com.daggery.patternlistpage.databinding.TilePatternBinding
 import com.daggery.present.domain.entities.BreathPatternItem
 
 class PatternListAdapter(
-    private val showModal: () -> Unit
+    private val showModal: (String) -> Unit
 ) :
     ListAdapter<BreathPatternItem, PatternListAdapter.PatternItemViewHolder>(PatternItemDiffer()) {
 
@@ -59,7 +59,7 @@ class PatternListAdapter(
     override fun onBindViewHolder(holder: PatternItemViewHolder, position: Int) {
         val current = getItem(position)
         holder.itemView.setOnClickListener {
-            showModal()
+            showModal(current.uuid)
         }
         holder.bind(current)
     }

@@ -4,22 +4,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daggery.patternlistpage.entities.PatternListState
 import com.daggery.present.data.usecases.DeleteBreathPatternUseCase
+import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import com.daggery.present.data.usecases.GetBreathPatternItemsFlowUseCase
 import com.daggery.present.data.usecases.UpdateBreathPatternUseCase
 import com.daggery.present.domain.entities.BreathPatternItem
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class PatternListPageViewModel @Inject constructor(
     private val getBreathPatternItemsFlowUseCase: GetBreathPatternItemsFlowUseCase,
+    private val getBreathPatternItemByUuidUseCase: GetBreathPatternItemByUuidUseCase,
     private val updateBreathPatternUseCase: UpdateBreathPatternUseCase,
     private val deleteBreathPatternUseCase: DeleteBreathPatternUseCase,
 
@@ -49,6 +49,13 @@ class PatternListPageViewModel @Inject constructor(
         viewModelScope.launch {
             _isOffScreen.emit(value)
         }
+    }
+
+    suspend fun getPattern(uuid: String): BreathPatternItem? {
+        var value: BreathPatternItem? = null
+        val job = viewModelScope.async { value = getBreathPatternItemByUuidUseCase(uuid) }
+        job.join()
+        return value
     }
 
     fun updatePattern(value: BreathPatternItem) {
