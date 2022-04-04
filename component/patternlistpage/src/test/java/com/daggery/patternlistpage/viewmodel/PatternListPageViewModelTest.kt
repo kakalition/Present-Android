@@ -1,6 +1,5 @@
 package com.daggery.patternlistpage.viewmodel
 
-import androidx.lifecycle.ViewModel
 import com.daggery.patternlistpage.entities.PatternListState
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
 import com.daggery.present.data.usecases.DeleteBreathPatternUseCase
@@ -8,13 +7,10 @@ import com.daggery.present.data.usecases.GetBreathPatternItemByUuidUseCase
 import com.daggery.present.data.usecases.GetBreathPatternItemsFlowUseCase
 import com.daggery.present.data.usecases.UpdateBreathPatternUseCase
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.test.*
 import org.junit.jupiter.api.Assertions
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.util.regex.Pattern
-import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 class PatternListPageViewModelTest : Spek({
