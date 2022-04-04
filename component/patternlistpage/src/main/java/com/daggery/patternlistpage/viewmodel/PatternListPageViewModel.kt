@@ -7,6 +7,7 @@ import com.daggery.present.data.usecases.DeleteBreathPatternUseCase
 import com.daggery.present.data.usecases.GetBreathPatternItemsFlowUseCase
 import com.daggery.present.domain.entities.BreathPatternItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,8 @@ class PatternListPageViewModel @Inject constructor(
     private var _isOffScreen = MutableStateFlow(true)
     private val isOffScreen get() = _isOffScreen.asStateFlow()
 
+    private var collectJob: Job? = null
+
     fun changeScreenState(value: Boolean) {
         viewModelScope.launch {
             _isOffScreen.emit(value)
@@ -40,8 +43,10 @@ class PatternListPageViewModel @Inject constructor(
     }
 
     fun collectState() {
-        viewModelScope.launch {
+        if (collectJob != null) collectJob?.cancel()
+        collectJob = viewModelScope.launch {
             getBreathPatternItemsFlowUseCase().collect {
+                ensureActive()
                 if (isOffScreen.value) isOffScreen.first { isOffScreen -> !isOffScreen }
                 _patternListState.emit(PatternListState.Result(it))
             }

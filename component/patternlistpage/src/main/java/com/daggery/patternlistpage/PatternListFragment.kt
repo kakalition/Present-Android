@@ -9,7 +9,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.daggery.patternlistpage.adapter.PatternListAdapter
 import com.daggery.patternlistpage.databinding.FragmentPatternListBinding
+import com.daggery.patternlistpage.entities.PatternListState
 import com.daggery.patternlistpage.viewmodel.PatternListPageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -22,6 +24,8 @@ class PatternListFragment : Fragment() {
 
     private val viewModel: PatternListPageViewModel by activityViewModels()
 
+    private val patternListAdapter = PatternListAdapter()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,11 +37,17 @@ class PatternListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.collectState()
+        bindRecyclerView()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.collectState()
                 viewModel.patternListState.collect {
+                    when (it) {
+                        PatternListState.Loading -> {}
+                        is PatternListState.Error -> {}
+                        is PatternListState.Result -> patternListAdapter.submitList(it.listOfPattern)
+                    }
 
                 }
             }
@@ -52,5 +62,9 @@ class PatternListFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         viewModel.changeScreenState(false)
+    }
+
+    private fun bindRecyclerView() {
+        viewBinding.patternRecyclerView.adapter = patternListAdapter
     }
 }
