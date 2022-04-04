@@ -13,6 +13,7 @@ import com.daggery.patternlistpage.adapter.PatternListAdapter
 import com.daggery.patternlistpage.databinding.FragmentPatternListBinding
 import com.daggery.patternlistpage.entities.PatternListState
 import com.daggery.patternlistpage.viewmodel.PatternListPageViewModel
+import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -72,9 +73,9 @@ class PatternListFragment : Fragment() {
     }
 
     private fun showModal(uuid: String) {
-        val modal = PatternModalSheetFragment()
         val bundle = Bundle()
-        bundle.putString(UUID_KEY, uuid)
+        bundle.putString(BundleKeys.PATTERN_UUID, uuid)
+        val modal = PatternModalSheetFragment()
         modal.arguments = bundle
         modal.show(childFragmentManager, PatternModalSheetFragment.TAG)
     }

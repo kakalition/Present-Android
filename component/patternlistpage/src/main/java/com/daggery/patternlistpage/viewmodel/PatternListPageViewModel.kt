@@ -22,12 +22,12 @@ class PatternListPageViewModel @Inject constructor(
     private val getBreathPatternItemByUuidUseCase: GetBreathPatternItemByUuidUseCase,
     private val updateBreathPatternUseCase: UpdateBreathPatternUseCase,
     private val deleteBreathPatternUseCase: DeleteBreathPatternUseCase,
-
 ) : ViewModel() {
 
-    //private var _patternListState = MutableStateFlow<PatternListState>(PatternListState.Loading)
-    //val patternListState get() = _patternListState.asStateFlow()
+    private var _patternListState = MutableStateFlow<PatternListState>(PatternListState.Loading)
+    val patternListState get() = _patternListState.asStateFlow()
 
+/*
     // Testing
     private var _patternListState = MutableStateFlow<PatternListState>(
         PatternListState.Result(
@@ -39,6 +39,7 @@ class PatternListPageViewModel @Inject constructor(
         )
     )
     val patternListState: StateFlow<PatternListState> = _patternListState.asStateFlow()
+*/
 
     private var _isOffScreen = MutableStateFlow(true)
     private val isOffScreen get() = _isOffScreen.asStateFlow()

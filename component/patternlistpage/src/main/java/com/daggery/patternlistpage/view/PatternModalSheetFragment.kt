@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.daggery.patternlistpage.databinding.FragmentPatternModalSheetListDialogBinding
 import com.daggery.patternlistpage.viewmodel.PatternListPageViewModel
+import com.daggery.present.sharedassets.BundleKeys
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -34,7 +35,7 @@ class PatternModalSheetFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewBinding.textInstanceName.text = viewModel.getPattern(arguments?.getString(PatternListFragment.UUID_KEY) ?: "")?.name
+            viewBinding.textInstanceName.text = viewModel.getPattern(arguments?.getString(BundleKeys.PATTERN_UUID) ?: "")?.name
         }
     }
 
