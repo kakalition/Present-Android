@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.daggery.patternlistpage.databinding.TilePatternBinding
 import com.daggery.present.domain.entities.BreathPatternItem
 
-class PatternListAdapter :
+class PatternListAdapter(
+    private val showModal: () -> Unit
+) :
     ListAdapter<BreathPatternItem, PatternListAdapter.PatternItemViewHolder>(PatternItemDiffer()) {
 
     class PatternItemViewHolder(private val binding: TilePatternBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -56,6 +58,9 @@ class PatternListAdapter :
 
     override fun onBindViewHolder(holder: PatternItemViewHolder, position: Int) {
         val current = getItem(position)
+        holder.itemView.setOnClickListener {
+            showModal()
+        }
         holder.bind(current)
     }
 }

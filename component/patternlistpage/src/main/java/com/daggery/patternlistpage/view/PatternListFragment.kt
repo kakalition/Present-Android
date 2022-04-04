@@ -1,4 +1,4 @@
-package com.daggery.patternlistpage
+package com.daggery.patternlistpage.view
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -24,7 +24,7 @@ class PatternListFragment : Fragment() {
 
     private val viewModel: PatternListPageViewModel by activityViewModels()
 
-    private val patternListAdapter = PatternListAdapter()
+    private val patternListAdapter = PatternListAdapter { showModal() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,7 +48,6 @@ class PatternListFragment : Fragment() {
                         is PatternListState.Error -> {}
                         is PatternListState.Result -> patternListAdapter.submitList(it.listOfPattern)
                     }
-
                 }
             }
         }
@@ -66,5 +65,10 @@ class PatternListFragment : Fragment() {
 
     private fun bindRecyclerView() {
         viewBinding.patternRecyclerView.adapter = patternListAdapter
+    }
+
+    private fun showModal() {
+        val modal = PatternModalSheetFragment()
+        modal.show(childFragmentManager, PatternModalSheetFragment.TAG)
     }
 }
