@@ -3,10 +3,7 @@ package com.daggery.patternlistpage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daggery.patternlistpage.entities.PatternListState
-import com.daggery.present.data.usecases.breathpattern.DeleteBreathPatternUseCase
-import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemByUuidUseCase
-import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemsFlowUseCase
-import com.daggery.present.data.usecases.breathpattern.UpdateBreathPatternUseCase
+import com.daggery.present.data.usecases.breathpattern.*
 import com.daggery.present.domain.entities.BreathPatternItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -19,6 +16,7 @@ import javax.inject.Inject
 class PatternListPageViewModel @Inject constructor(
     private val getBreathPatternItemsFlowUseCase: GetBreathPatternItemsFlowUseCase,
     private val getBreathPatternItemByUuidUseCase: GetBreathPatternItemByUuidUseCase,
+    private val addBreathPatternUseCase: AddBreathPatternUseCase,
     private val updateBreathPatternUseCase: UpdateBreathPatternUseCase,
     private val deleteBreathPatternUseCase: DeleteBreathPatternUseCase,
 ) : ViewModel() {
