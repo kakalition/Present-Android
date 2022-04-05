@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-internal class FakeRoutineItemRepository : RoutineItemRepository {
+class FakeRoutineItemRepository : RoutineItemRepository {
 
     private val routineItemFlow = MutableStateFlow(
         List(3) {
