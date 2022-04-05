@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.daggery.present.data.usecases.routineitem.*
 import com.daggery.present.domain.entities.RoutineItem
 import com.daggery.present.routinepage.entities.RoutineState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class RoutinePageViewModel @Inject constructor(
     private val getRoutinesFlowUseCase: GetRoutineFlowUseCase,
     private val getRoutineByUuidUseCase: GetRoutineByUuidUseCase,
@@ -21,7 +23,17 @@ class RoutinePageViewModel @Inject constructor(
     private val deleteRoutineUseCase: DeleteRoutineUseCase
 ) : ViewModel() {
 
+/*
     private var _routineState = MutableStateFlow<RoutineState>(RoutineState.Loading)
+    val routineState = _routineState.asStateFlow()
+*/
+
+    // Testing
+    private var _routineState = MutableStateFlow<RoutineState>(RoutineState.Result(
+        List(5) {
+            RoutineItem("$it", "Routine $it", it, it, listOf(), false)
+        }
+    ))
     val routineState = _routineState.asStateFlow()
 
     private var collectJob: Job? = null

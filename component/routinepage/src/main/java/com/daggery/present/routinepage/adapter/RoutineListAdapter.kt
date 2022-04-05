@@ -21,6 +21,7 @@ class RoutineListAdapter : ListAdapter<RoutineItem, RoutineListAdapter.RoutineIt
                     repeatEvery += "$it, "
                 }
                 binding.textRoutineDays.text = repeatEvery.dropLast(2)
+                binding.switchIsActive.isChecked = value.isActive
             }
     }
 
