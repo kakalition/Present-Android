@@ -1,13 +1,11 @@
 package com.daggery.present.data.db.dao
 
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 import com.daggery.present.data.db.interfaces.IRoutineItemDao
 import com.daggery.present.data.entities.RoutineItemEntity
 import kotlinx.coroutines.flow.Flow
 
+@Dao
 internal interface RoutineItemDao : IRoutineItemDao {
 
     @Query("SELECT * FROM routine_item ORDER BY hour DESC")

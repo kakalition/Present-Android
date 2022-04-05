@@ -3,6 +3,7 @@ package com.daggery.present.data.repositories
 import com.daggery.present.data.db.interfaces.IRoutineItemDao
 import com.daggery.present.data.db.test.FakeRoutineItemDao
 import com.daggery.present.data.mappers.RoutineItemEntityMapper
+import com.daggery.present.domain.entities.Day
 import com.daggery.present.domain.entities.RoutineItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -67,7 +68,7 @@ internal object RoutineItemRepositoryImplTest : Spek({
         }
 
         Scenario("adding Routine") {
-            val valueThree = RoutineItem("3", "Message", 0, 10, listOf())
+            val valueThree = RoutineItem("3", "Message", 0, 10, listOf(Day.MO, Day.TU))
 
             When("calling addRoutine() with given argument") {
                 runTest {
