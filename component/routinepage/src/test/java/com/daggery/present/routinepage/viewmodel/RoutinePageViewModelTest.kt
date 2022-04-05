@@ -94,7 +94,7 @@ class RoutinePageViewModelTest : Spek({
 
             Then("it should return RoutineItem with corresponding uuid") {
                 runTest {
-                    val expected = RoutineItem("1", "Routine 1", 1, 1, listOf(Day.SU, Day.MO))
+                    val expected = RoutineItem("1", "Routine 1", 1, 1, listOf(Day.SU, Day.MO), false)
                     Assertions.assertEquals(expected, value)
                 }
             }
@@ -102,7 +102,7 @@ class RoutinePageViewModelTest : Spek({
 
         Scenario("adding RoutineItem") {
             val valueThree = RoutineItem(
-                "3", "Routine 3", 1, 1, listOf(Day.MO)
+                "3", "Routine 3", 1, 1, listOf(Day.MO), false
             )
 
             When("calling collectState()") {
@@ -129,7 +129,7 @@ class RoutinePageViewModelTest : Spek({
 
         Scenario("updating RoutineItem") {
             val updatedValue = RoutineItem(
-                "2", "Updated Routine 2", 1, 1, listOf(Day.MO)
+                "2", "Updated Routine 2", 1, 1, listOf(Day.MO), false
             )
 
             When("calling collectState()") {

@@ -2,101 +2,181 @@ package com.daggery.patternlistpage.viewmodel
 
 import com.daggery.patternlistpage.entities.PatternListState
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
-import com.daggery.present.data.usecases.breathpattern.DeleteBreathPatternUseCase
-import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemByUuidUseCase
-import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemsFlowUseCase
-import com.daggery.present.data.usecases.breathpattern.UpdateBreathPatternUseCase
+import com.daggery.present.data.usecases.breathpattern.*
+import com.daggery.present.domain.entities.BreathPatternItem
+import com.daggery.present.domain.entities.Day
+import com.daggery.present.domain.entities.RoutineItem
+import com.daggery.present.domain.repositories.BreathPatternRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.test.*
 import org.junit.jupiter.api.Assertions
 import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import org.spekframework.spek2.style.gherkin.Feature
 
 @ExperimentalCoroutinesApi
 class PatternListPageViewModelTest : Spek({
 
-    describe("PatternListPage ViewModel Test") {
-        val fakeRepository = FakeBreathPatternRepository()
-        val getBreathPatternItemsFlowUseCase = GetBreathPatternItemsFlowUseCase(fakeRepository)
-        val getBreathPatternItemByUuidUseCase = GetBreathPatternItemByUuidUseCase(fakeRepository)
-        val updateBreathPatternUseCase = UpdateBreathPatternUseCase(fakeRepository)
-        val deleteBreathPatternUseCase = DeleteBreathPatternUseCase(fakeRepository)
-        val sut = PatternListPageViewModel(
-            getBreathPatternItemsFlowUseCase,
-            getBreathPatternItemByUuidUseCase,
-            updateBreathPatternUseCase,
-            deleteBreathPatternUseCase
-        )
+    Feature("PatternListPage ViewModel Test") {
 
         lateinit var testCoroutineScheduler: TestCoroutineScheduler
         lateinit var coroutineDispatcher: TestDispatcher
 
-        beforeEachTest {
+        lateinit var repository: BreathPatternRepository
+        lateinit var getBreathPatternItemsFlowUseCase: GetBreathPatternItemsFlowUseCase
+        lateinit var getBreathPatternItemByUuidUseCase: GetBreathPatternItemByUuidUseCase
+        lateinit var addBreathPatternUseCase: AddBreathPatternUseCase
+        lateinit var updateBreathPatternUseCase: UpdateBreathPatternUseCase
+        lateinit var deleteBreathPatternUseCase: DeleteBreathPatternUseCase
+
+        lateinit var sut: PatternListPageViewModel
+
+        beforeEachScenario {
             testCoroutineScheduler = TestCoroutineScheduler()
             coroutineDispatcher = StandardTestDispatcher(testCoroutineScheduler)
+
+            repository = FakeBreathPatternRepository()
+            getBreathPatternItemsFlowUseCase = GetBreathPatternItemsFlowUseCase(repository)
+            getBreathPatternItemByUuidUseCase = GetBreathPatternItemByUuidUseCase(repository)
+            addBreathPatternUseCase = AddBreathPatternUseCase(repository)
+            updateBreathPatternUseCase = UpdateBreathPatternUseCase(repository)
+            deleteBreathPatternUseCase = DeleteBreathPatternUseCase(repository)
+            sut = PatternListPageViewModel(
+                getBreathPatternItemsFlowUseCase,
+                getBreathPatternItemByUuidUseCase,
+                addBreathPatternUseCase,
+                updateBreathPatternUseCase,
+                deleteBreathPatternUseCase
+            )
+
             Dispatchers.setMain(coroutineDispatcher)
         }
 
-        afterEachTest {
+        afterEachScenario {
             Dispatchers.resetMain()
         }
 
-        describe("#collectState") {
-            context("calls this method") {
-                it("emit value to patternListState") {
-                    TestScope(coroutineDispatcher).runTest {
-                        var value: PatternListState? = null
-                        sut.collectState()
-                        sut.changeScreenState(false)
+        Scenario("collecting PatternListState") {
 
-                        val job = launch {
-                            sut.patternListState.collect {
-                                ensureActive()
-                                value = it
-                                if (it is PatternListState.Result) cancel()
-                            }
-                        }
+            When("calling collectState()") {
+                runTest {
+                    Assertions.assertEquals(PatternListState.Loading, sut.patternListState.value)
+                    sut.changeScreenState(false)
+                    val job = launch { sut.collectState() }
+                    job.join()
+                }
+            }
 
-                        job.join()
-                        Assertions.assertInstanceOf(PatternListState.Result::class.java, value)
-                    }
+            Then("collected value is emitted to patternListState") {
+                runTest {
+                    Assertions.assertInstanceOf(PatternListState.Result::class.java, sut.patternListState.value)
                 }
             }
         }
 
-        describe("#updatePattern") {
-            context("calls this method with given argument") {
-                it("update corresponding pattern with new data") {
-                    runTest {
-                        val valueBeforeUpdate = sut.getPattern("1")
-                        val updatedValue = valueBeforeUpdate?.copy(name = "Updated Value")
-                        Assertions.assertNotNull(updatedValue)
+        Scenario("getting BreathPatternItem") {
+            var value: BreathPatternItem? = null
 
-                        updatedValue?.let {
-                            sut.updatePattern(it)
-                            sut.updatePattern(updatedValue)
+            When("calling collectState()") {
+                runTest {
+                    Assertions.assertEquals(PatternListState.Loading, sut.patternListState.value)
+                    sut.changeScreenState(false)
+                    val job = launch { sut.collectState() }
+                    job.join()
+                }
+            }
 
-                            val value = sut.getPattern("1")
-                            Assertions.assertEquals(updatedValue, value)
-                        }
-                    }
+            And("calling getPattern() with given id") {
+                runTest {
+                    val uuidOne = "1"
+                    value = sut.getPatternItem(uuidOne)
+                }
+            }
+
+            Then("it should return BreathPatternItem with corresponding uuid") {
+                runTest {
+                    val expected = BreathPatternItem("1", "Pattern 1", 1, 1, 1, 1, 1, 1)
+                    Assertions.assertEquals(expected, value)
                 }
             }
         }
 
-        describe("#deletePattern") {
-            context("calls this method with given argument") {
-                it("delete corresponding routine with new data") {
-                    runTest {
-                        val value = sut.getPattern("1")
-                        Assertions.assertNotNull(value)
+        Scenario("adding BreathPatternItem") {
+            val valueThree = BreathPatternItem("3", "Pattern 3", 3, 3, 3, 3, 3, 3)
 
-                        value?.let {
-                            sut.deletePattern(it)
-                            val afterDeleted = sut.getPattern("1")
-                            Assertions.assertNull(afterDeleted)
-                        }
+            When("calling collectState()") {
+                runTest {
+                    Assertions.assertEquals(PatternListState.Loading, sut.patternListState.value)
+                    sut.changeScreenState(false)
+                    val job = launch { sut.collectState() }
+                    job.join()
+                }
+            }
+
+            And("calling addPattern() with given BreathPatternItem") {
+                runTest {
+                    sut.addPattern(valueThree)
+                }
+            }
+
+            Then("given BreathPatternItem should be in database") {
+                runTest {
+                    val value = sut.getPatternItem("3")
+                    Assertions.assertEquals(valueThree, value)
+                }
+            }
+        }
+
+        Scenario("updating BreathPatternItem") {
+            val updatedValue = BreathPatternItem("1", "Updated Pattern 1", 1, 1, 1, 1, 1, 1)
+
+            When("calling collectState()") {
+                runTest {
+                    Assertions.assertEquals(PatternListState.Loading, sut.patternListState.value)
+                    sut.changeScreenState(false)
+                    val job = launch { sut.collectState() }
+                    job.join()
+                }
+            }
+
+            And("calling updatePattern() with given RoutineItem") {
+                runTest {
+                    sut.updatePattern(updatedValue)
+                }
+            }
+
+            Then("RoutineItem with corresponding uuid should be in updated") {
+                runTest {
+                    val value = sut.getPatternItem("1")
+                    Assertions.assertEquals(updatedValue, value)
+                }
+            }
+        }
+
+        Scenario("deleting BreathPatternItem") {
+            val uuidOne = "1"
+            var value: BreathPatternItem? = null
+
+            When("calling collectState()") {
+                runTest {
+                    Assertions.assertEquals(PatternListState.Loading, sut.patternListState.value)
+                    sut.changeScreenState(false)
+                    val job = launch { sut.collectState() }
+                    job.join()
+                }
+            }
+
+            And("calling deletePattern with given BreathPatternItem") {
+                runTest {
+                    value = sut.getPatternItem(uuidOne)
+                    value?.let {
+                        sut.deletePattern(it)
                     }
+                }
+            }
+
+            Then("given RoutineItem should be deleted") {
+                runTest {
+                    Assertions.assertNull(sut.getPatternItem(uuidOne))
                 }
             }
         }

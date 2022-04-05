@@ -3,15 +3,13 @@ package com.daggery.patternlistpage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daggery.patternlistpage.entities.PatternListState
-import com.daggery.present.data.usecases.breathpattern.DeleteBreathPatternUseCase
-import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemByUuidUseCase
-import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemsFlowUseCase
-import com.daggery.present.data.usecases.breathpattern.UpdateBreathPatternUseCase
+import com.daggery.present.data.usecases.breathpattern.*
 import com.daggery.present.domain.entities.BreathPatternItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -19,6 +17,7 @@ import javax.inject.Inject
 class PatternListPageViewModel @Inject constructor(
     private val getBreathPatternItemsFlowUseCase: GetBreathPatternItemsFlowUseCase,
     private val getBreathPatternItemByUuidUseCase: GetBreathPatternItemByUuidUseCase,
+    private val addBreathPatternUseCase: AddBreathPatternUseCase,
     private val updateBreathPatternUseCase: UpdateBreathPatternUseCase,
     private val deleteBreathPatternUseCase: DeleteBreathPatternUseCase,
 ) : ViewModel() {
@@ -51,11 +50,17 @@ class PatternListPageViewModel @Inject constructor(
         }
     }
 
-    suspend fun getPattern(uuid: String): BreathPatternItem? {
+    suspend fun getPatternItem(uuid: String): BreathPatternItem? {
         var value: BreathPatternItem? = null
         val job = viewModelScope.async { value = getBreathPatternItemByUuidUseCase(uuid) }
         job.join()
         return value
+    }
+
+    fun addPattern(value: BreathPatternItem) {
+        viewModelScope.launch {
+            addBreathPatternUseCase(value)
+        }
     }
 
     fun updatePattern(value: BreathPatternItem) {
@@ -73,11 +78,13 @@ class PatternListPageViewModel @Inject constructor(
     fun collectState() {
         if (collectJob != null) collectJob?.cancel()
         collectJob = viewModelScope.launch {
-            getBreathPatternItemsFlowUseCase().collect {
-                ensureActive()
-                if (isOffScreen.value) isOffScreen.first { isOffScreen -> !isOffScreen }
-                _patternListState.emit(PatternListState.Result(it))
-            }
+            getBreathPatternItemsFlowUseCase()
+                .catch { _patternListState.emit(PatternListState.Error(it)) }
+                .collect {
+                    ensureActive()
+                    if (isOffScreen.value) isOffScreen.first { isOffScreen -> !isOffScreen }
+                    _patternListState.emit(PatternListState.Result(it))
+                }
         }
     }
 }

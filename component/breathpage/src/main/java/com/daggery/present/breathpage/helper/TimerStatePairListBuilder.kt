@@ -21,7 +21,6 @@ class TimerStatePairListBuilder @Inject constructor(
         return this
     }
 
-    // TODO: Fix This Algorithm
     private fun stateCycler(value: BreathStateEnum, repeat: Boolean = true): BreathStateEnum {
         return when(value) {
             BreathStateEnum.INHALE -> {
@@ -64,7 +63,6 @@ class TimerStatePairListBuilder @Inject constructor(
             .build()
         )
 
-        // TODO: Clean Up
         repeat(stateHolder.repetitions) {
             var currentEvaluatedState = BreathStateEnum.INHALE
             val target = if (stateHolder.holdPostExhaleDuration != 0) {

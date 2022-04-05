@@ -35,7 +35,7 @@ class PatternModalSheetFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewBinding.textInstanceName.text = viewModel.getPattern(arguments?.getString(BundleKeys.PATTERN_UUID) ?: "")?.name
+            viewBinding.textInstanceName.text = viewModel.getPatternItem(arguments?.getString(BundleKeys.PATTERN_UUID) ?: "")?.name
         }
     }
 
