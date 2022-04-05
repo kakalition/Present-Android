@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -49,11 +50,17 @@ class PatternListPageViewModel @Inject constructor(
         }
     }
 
-    suspend fun getPattern(uuid: String): BreathPatternItem? {
+    suspend fun getPatternItem(uuid: String): BreathPatternItem? {
         var value: BreathPatternItem? = null
         val job = viewModelScope.async { value = getBreathPatternItemByUuidUseCase(uuid) }
         job.join()
         return value
+    }
+
+    fun addPattern(value: BreathPatternItem) {
+        viewModelScope.launch {
+            addBreathPatternUseCase(value)
+        }
     }
 
     fun updatePattern(value: BreathPatternItem) {
@@ -71,11 +78,13 @@ class PatternListPageViewModel @Inject constructor(
     fun collectState() {
         if (collectJob != null) collectJob?.cancel()
         collectJob = viewModelScope.launch {
-            getBreathPatternItemsFlowUseCase().collect {
-                ensureActive()
-                if (isOffScreen.value) isOffScreen.first { isOffScreen -> !isOffScreen }
-                _patternListState.emit(PatternListState.Result(it))
-            }
+            getBreathPatternItemsFlowUseCase()
+                .catch { _patternListState.emit(PatternListState.Error(it)) }
+                .collect {
+                    ensureActive()
+                    if (isOffScreen.value) isOffScreen.first { isOffScreen -> !isOffScreen }
+                    _patternListState.emit(PatternListState.Result(it))
+                }
         }
     }
 }
