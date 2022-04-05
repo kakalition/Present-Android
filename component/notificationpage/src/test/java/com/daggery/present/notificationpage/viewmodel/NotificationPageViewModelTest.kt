@@ -1,37 +1,62 @@
 package com.daggery.present.notificationpage.viewmodel
 
+import com.daggery.present.data.repositories.test.FakeNotificationItemRepository
+import com.daggery.present.data.usecases.notificationitem.AddNotificationUseCase
+import com.daggery.present.data.usecases.notificationitem.GetNotificationByUuidUseCase
+import com.daggery.present.data.usecases.notificationitem.GetNotificationsFlowUseCase
+import com.daggery.present.data.usecases.notificationitem.UpdateNotificationUseCase
+import com.daggery.present.domain.repositories.NotificationItemRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.*
 import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.gherkin.Feature
 import org.spekframework.spek2.style.specification.describe
 
+@ExperimentalCoroutinesApi
 class NotificationPageViewModelTest : Spek({
 
-    describe("NotificationPage ViewModel Test") {
-        val sut = NotificationPageViewModel()
+    Feature("NotificationPage ViewModel Test") {
 
+        lateinit var testCoroutineScheduler: TestCoroutineScheduler
+        lateinit var coroutineDispatcher: TestDispatcher
 
-        describe("#getAllNotification") {
-            context("calls this method") {
-                it("returns all notification") { // TODO: Create this dataclass
+        lateinit var repository: NotificationItemRepository
+        lateinit var getNotificationsFlowUseCase: GetNotificationsFlowUseCase
+        lateinit var getNotificationByUuidUseCase: GetNotificationByUuidUseCase
+        lateinit var addNotificationUseCase: AddNotificationUseCase
+        lateinit var updateNotificationUseCase: UpdateNotificationUseCase
+        lateinit var deleteNotificationUseCase: AddNotificationUseCase
 
-                }
-            }
+        lateinit var sut: NotificationPageViewModel
+
+        beforeEachScenario {
+            testCoroutineScheduler = TestCoroutineScheduler()
+            coroutineDispatcher = StandardTestDispatcher(testCoroutineScheduler)
+
+            repository = FakeNotificationItemRepository()
+            getNotificationsFlowUseCase = GetNotificationsFlowUseCase(repository)
+            getNotificationByUuidUseCase = GetNotificationByUuidUseCase(repository)
+            addNotificationUseCase = AddNotificationUseCase(repository)
+            updateNotificationUseCase = UpdateNotificationUseCase(repository)
+            deleteNotificationUseCase = AddNotificationUseCase(repository)
+            sut = NotificationPageViewModel(
+                getNotificationsFlowUseCase,
+                getNotificationByUuidUseCase,
+                addNotificationUseCase,
+                updateNotificationUseCase,
+                deleteNotificationUseCase
+            )
+
+            Dispatchers.setMain(coroutineDispatcher)
         }
 
-        describe("#toggleNotification") {
-            context("calls this method with given argument") {
-                it("update given argument to active/inactive state") {
-
-                }
-            }
+        afterEachScenario {
+            Dispatchers.resetMain()
         }
 
-        describe("#deleteNotification") {
-            context("calls this method with given argument") {
-                it("delete corresponding routine with new data") {
+        Scenario("collecting notificationItem notificationsFlow") {
 
-                }
-            }
         }
-
     }
 })
