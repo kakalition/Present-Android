@@ -7,6 +7,7 @@
         <entry key="component/breathpage/src/main/res/drawable/gradient_ground_state.xml" value="0.168" />
         <entry key="component/breathpage/src/main/res/layout/fragment_breath_page.xml" value="0.33" />
         <entry key="component/notificationpage/src/main/res/layout/fragment_notification_page.xml" value="0.34375" />
+        <entry key="component/notificationpage/src/main/res/layout/tile_notification.xml" value="0.34375" />
         <entry key="component/patternlistpage/src/main/res/layout/fragment_pattern_list.xml" value="0.34375" />
         <entry key="component/patternlistpage/src/main/res/layout/fragment_pattern_modal_sheet_list_dialog.xml" value="0.34375" />
         <entry key="component/patternlistpage/src/main/res/layout/fragment_pattern_modal_sheet_list_dialog_item.xml" value="0.34375" />
