@@ -5,6 +5,7 @@ import com.daggery.present.domain.entities.RoutineItem
 import javax.inject.Inject
 
 class RoutineItemEntityMapper @Inject constructor(){
+
     fun toRoutineItem(value: RoutineItemEntity): RoutineItem {
         return RoutineItem(
             value.uuid,
