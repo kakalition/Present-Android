@@ -12,7 +12,8 @@ class RoutineItemEntityMapper @Inject constructor(){
             value.name,
             value.hour,
             value.minute,
-            value.repeatEvery
+            value.repeatEvery,
+            value.isActive
         )
     }
 
@@ -22,7 +23,8 @@ class RoutineItemEntityMapper @Inject constructor(){
             value.name,
             value.hour,
             value.minute,
-            value.repeatEvery
+            value.repeatEvery,
+            value.isActive
         )
     }
 }

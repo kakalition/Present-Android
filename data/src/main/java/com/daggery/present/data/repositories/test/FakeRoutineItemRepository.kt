@@ -11,7 +11,7 @@ class FakeRoutineItemRepository : RoutineItemRepository {
 
     private val routineItemFlow = MutableStateFlow(
         List(3) {
-            RoutineItem("$it", "Routine $it", it, it, listOf(Day.SU, Day.MO))
+            RoutineItem("$it", "Routine $it", it, it, listOf(Day.SU, Day.MO), false)
         }
     )
 
