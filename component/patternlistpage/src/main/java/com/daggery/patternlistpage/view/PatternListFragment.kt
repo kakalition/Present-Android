@@ -51,7 +51,7 @@ class PatternListFragment : Fragment() {
                     when (it) {
                         PatternListState.Loading -> {}
                         is PatternListState.Error -> {}
-                        is PatternListState.Result -> patternListAdapter.submitList(it.listOfPattern)
+                        is PatternListState.Result -> patternListAdapter.submitList(it.value)
                     }
                 }
             }
