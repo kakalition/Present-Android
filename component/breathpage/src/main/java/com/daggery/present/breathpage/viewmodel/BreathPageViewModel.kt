@@ -23,6 +23,7 @@ class BreathPageViewModel @Inject constructor(
     private val getBreathPatternItemByUuidUseCase: GetBreathPatternItemByUuidUseCase
 ): ViewModel() {
 
+    // TODO: Remove BreathPatternStateHolder, should come up with better idea
     private var _breathPatternStateHolder: BreathPatternStateHolder? = null
     val breathPatternStateHolder get() = _breathPatternStateHolder!!
     // Testing
@@ -74,13 +75,11 @@ class BreathPageViewModel @Inject constructor(
 
     suspend fun getBreathPatternStateHolder(uuid: String) {
         _breathPatternStateHolder = getBreathPatternItemByUuidUseCase(uuid)?.let { mapper.toBreathPatternStateHolder(it) }
-        if (breathPatternStateHolder != null) {
-            val listValue= timerStatePairListBuilder
-                .setStateHolder(breathPatternStateHolder)
-                .build()
-            _timerStateFlow = timerStateFlowBuilder(listValue)
-            collectJob = collectTimerState()
-        }
+        val listValue= timerStatePairListBuilder
+            .setStateHolder(breathPatternStateHolder)
+            .build()
+        _timerStateFlow = timerStateFlowBuilder(listValue)
+        collectJob = collectTimerState()
     }
 
     private fun collectTimerState(): Job {
