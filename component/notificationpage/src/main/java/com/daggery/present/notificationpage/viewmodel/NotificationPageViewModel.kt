@@ -8,6 +8,7 @@ import com.daggery.present.data.usecases.notificationitem.GetNotificationsFlowUs
 import com.daggery.present.data.usecases.notificationitem.UpdateNotificationUseCase
 import com.daggery.present.domain.entities.NotificationItem
 import com.daggery.present.notificationpage.entities.NotificationsState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class NotificationPageViewModel @Inject constructor(
     private val getNotificationsFlowUseCase: GetNotificationsFlowUseCase,
     private val getNotificationByUuidUseCase: GetNotificationByUuidUseCase,
