@@ -5,7 +5,7 @@ import com.daggery.present.domain.repositories.RoutineItemRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class RoutineItemRepositoryImpl @Inject constructor(
+internal class RoutineItemRepositoryImpl @Inject constructor(
     private val localDataSource: RoutineItemLocalDataSource
 ) : RoutineItemRepository {
 

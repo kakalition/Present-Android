@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class RoutineItemLocalDataSource @Inject constructor(
+internal class RoutineItemLocalDataSource @Inject constructor(
     private val dao: IRoutineItemDao,
     @IoDispatcher private val coroutineDispatcher: CoroutineDispatcher,
     private val mapper: RoutineItemEntityMapper

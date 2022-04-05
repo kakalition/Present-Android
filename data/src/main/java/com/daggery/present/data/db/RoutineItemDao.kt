@@ -7,7 +7,7 @@ import androidx.room.Update
 import com.daggery.present.data.entities.RoutineItemEntity
 import kotlinx.coroutines.flow.Flow
 
-interface RoutineItemDao : IRoutineItemDao {
+internal interface RoutineItemDao : IRoutineItemDao {
 
     @Query("SELECT * FROM routine_item ORDER BY hour DESC")
     override fun getRoutinesFlow(): Flow<List<RoutineItemEntity>>

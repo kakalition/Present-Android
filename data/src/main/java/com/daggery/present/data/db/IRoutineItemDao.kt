@@ -4,7 +4,7 @@ import com.daggery.present.data.entities.RoutineItemEntity
 import com.daggery.present.domain.entities.RoutineItem
 import kotlinx.coroutines.flow.Flow
 
-interface IRoutineItemDao {
+internal interface IRoutineItemDao {
 
     fun getRoutinesFlow(): Flow<List<RoutineItemEntity>>
 
