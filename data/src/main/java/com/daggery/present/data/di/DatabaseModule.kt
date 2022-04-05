@@ -1,12 +1,13 @@
 package com.daggery.present.data.di
 
 import android.content.Context
-import com.daggery.present.data.db.*
-import com.daggery.present.data.db.BreathPatternDao
-import com.daggery.present.data.db.IBreathPatternDao
-import com.daggery.present.data.db.INotificationItemDao
-import com.daggery.present.data.db.NotificationItemDao
+import com.daggery.present.data.db.dao.BreathPatternDao
+import com.daggery.present.data.db.interfaces.IBreathPatternDao
+import com.daggery.present.data.db.interfaces.INotificationItemDao
+import com.daggery.present.data.db.dao.NotificationItemDao
 import com.daggery.present.data.db.PresentDatabase
+import com.daggery.present.data.db.dao.RoutineItemDao
+import com.daggery.present.data.db.interfaces.IRoutineItemDao
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -35,6 +36,11 @@ internal object DatabaseModule {
         return db.getNotificationItemDao()
     }
 
+    @Provides
+    fun providesRoutineItemDao(db: PresentDatabase): RoutineItemDao {
+        return db.getRoutineItemDao()
+    }
+
 }
 
 @Module
@@ -45,4 +51,7 @@ internal abstract class DatabaseInterfaceModule {
 
     @Binds
     abstract fun bindsNotificationItemDao(dao: NotificationItemDao): INotificationItemDao
+
+    @Binds
+    abstract fun bindsRoutineItemDao(dao: RoutineItemDao): IRoutineItemDao
 }

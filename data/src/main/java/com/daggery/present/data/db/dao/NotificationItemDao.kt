@@ -1,8 +1,8 @@
-package com.daggery.present.data.db
+package com.daggery.present.data.db.dao
 
 import androidx.room.*
+import com.daggery.present.data.db.interfaces.INotificationItemDao
 import com.daggery.present.data.entities.NotificationItemEntity
-import com.daggery.present.domain.entities.NotificationItem
 import kotlinx.coroutines.flow.Flow
 
 @Dao

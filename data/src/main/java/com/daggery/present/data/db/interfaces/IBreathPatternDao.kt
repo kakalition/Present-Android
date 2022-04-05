@@ -1,4 +1,4 @@
-package com.daggery.present.data.db
+package com.daggery.present.data.db.interfaces
 
 import com.daggery.present.data.entities.BreathPatternItemEntity
 import kotlinx.coroutines.flow.Flow
