@@ -1,6 +1,6 @@
 package com.daggery.present.data.db.test
 
-import com.daggery.present.data.db.IRoutineItemDao
+import com.daggery.present.data.db.interfaces.IRoutineItemDao
 import com.daggery.present.data.entities.RoutineItemEntity
 import com.daggery.present.domain.entities.Day
 import kotlinx.coroutines.flow.MutableStateFlow

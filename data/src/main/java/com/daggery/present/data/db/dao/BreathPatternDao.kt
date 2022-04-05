@@ -1,6 +1,7 @@
-package com.daggery.present.data.db
+package com.daggery.present.data.db.dao
 
 import androidx.room.*
+import com.daggery.present.data.db.interfaces.IBreathPatternDao
 import com.daggery.present.data.entities.BreathPatternItemEntity
 import kotlinx.coroutines.flow.Flow
 

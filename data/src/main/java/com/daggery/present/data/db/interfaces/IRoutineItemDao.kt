@@ -1,4 +1,4 @@
-package com.daggery.present.data.db
+package com.daggery.present.data.db.interfaces
 
 import com.daggery.present.data.entities.RoutineItemEntity
 import com.daggery.present.domain.entities.RoutineItem

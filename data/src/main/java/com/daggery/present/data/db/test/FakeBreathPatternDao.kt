@@ -1,6 +1,6 @@
 package com.daggery.present.data.db.test
 
-import com.daggery.present.data.db.IBreathPatternDao
+import com.daggery.present.data.db.interfaces.IBreathPatternDao
 import com.daggery.present.data.entities.BreathPatternItemEntity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

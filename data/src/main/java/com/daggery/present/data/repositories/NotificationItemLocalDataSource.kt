@@ -1,7 +1,6 @@
 package com.daggery.present.data.repositories
 
-import com.daggery.present.data.db.INotificationItemDao
-import com.daggery.present.data.db.NotificationItemDao
+import com.daggery.present.data.db.interfaces.INotificationItemDao
 import com.daggery.present.data.di.CoroutineDispatcherModule.IoDispatcher
 import com.daggery.present.data.mappers.NotificationItemEntityMapper
 import com.daggery.present.domain.entities.NotificationItem

@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.daggery.present.data.db.dao.BreathPatternDao
+import com.daggery.present.data.db.dao.NotificationItemDao
+import com.daggery.present.data.db.dao.RoutineItemDao
 import com.daggery.present.data.entities.BreathPatternItemEntity
 import com.daggery.present.data.entities.NotificationItemEntity
 import com.daggery.present.data.entities.RoutineItemEntity

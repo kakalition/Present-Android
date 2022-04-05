@@ -1,6 +1,6 @@
 package com.daggery.present.data.repositories
 
-import com.daggery.present.data.db.IRoutineItemDao
+import com.daggery.present.data.db.interfaces.IRoutineItemDao
 import com.daggery.present.data.di.CoroutineDispatcherModule.IoDispatcher
 import com.daggery.present.data.mappers.RoutineItemEntityMapper
 import com.daggery.present.domain.entities.RoutineItem
