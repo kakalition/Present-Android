@@ -38,6 +38,7 @@ internal class FakeRoutineItemRepository : RoutineItemRepository {
             if (it.uuid == value.uuid) value
             else it
         }
+        routineItemFlow.emit(newValue)
     }
 
     override suspend fun deleteRoutine(value: RoutineItem) {
