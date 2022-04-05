@@ -32,6 +32,14 @@ class NotificationPageViewModel @Inject constructor(
     private val _notificationsState = MutableStateFlow<NotificationsState>(NotificationsState.Loading)
     val notificationState = _notificationsState.asStateFlow()
 
+/*
+    // Testing
+    private val _notificationsState = MutableStateFlow<NotificationsState>(NotificationsState.Result(
+        List(3) { NotificationItem("$it", "Notification $it", it, it, false) }
+    ))
+    val notificationState = _notificationsState.asStateFlow()
+*/
+
     fun collectState() {
         if (collectJob != null) collectJob?.cancel()
         collectJob = viewModelScope.launch {
