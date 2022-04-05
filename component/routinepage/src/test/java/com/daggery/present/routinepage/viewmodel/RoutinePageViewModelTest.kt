@@ -2,8 +2,11 @@ package com.daggery.present.routinepage.viewmodel
 
 import com.daggery.present.data.repositories.test.FakeRoutineItemRepository
 import com.daggery.present.data.usecases.routineitem.*
+import com.daggery.present.domain.entities.Day
 import com.daggery.present.domain.entities.NotificationItem
+import com.daggery.present.domain.entities.RoutineItem
 import com.daggery.present.domain.repositories.RoutineItemRepository
+import com.daggery.present.routinepage.entities.RoutineState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -54,127 +57,127 @@ class RoutinePageViewModelTest : Spek({
             Dispatchers.resetMain()
         }
 
-        Scenario("collecting notificationsState") {
+        Scenario("collecting routinesState") {
 
             When("calling collectState()") {
                 runTest {
-                    Assertions.assertEquals(NotificationsState.Loading, sut.notificationState.value)
+                    Assertions.assertEquals(RoutineState.Loading, sut.routineState.value)
                     val job = launch { sut.collectState() }
                     job.join()
                 }
             }
 
-            Then("collected value is emitted to notificationsState") {
+            Then("collected value is emitted to routinesState") {
                 runTest {
-                    Assertions.assertInstanceOf(NotificationsState.Result::class.java, sut.notificationState.value)
+                    Assertions.assertInstanceOf(RoutineState.Result::class.java, sut.routineState.value)
                 }
             }
         }
 
-        Scenario("getting NotificationItem") {
-            var value: NotificationItem? = null
+        Scenario("getting RoutineItem") {
+            var value: RoutineItem? = null
 
             When("calling collectState()") {
                 runTest {
-                    Assertions.assertEquals(NotificationsState.Loading, sut.notificationState.value)
+                    Assertions.assertEquals(RoutineState.Loading, sut.routineState.value)
                     val job = launch { sut.collectState() }
                     job.join()
                 }
             }
 
-            And("calling getNotificationItem with given id") {
+            And("calling getRoutineItem() with given id") {
                 runTest {
                     val uuidOne = "1"
-                    value = sut.getNotificationItem(uuidOne)
+                    value = sut.getRoutineItem(uuidOne)
                 }
             }
 
-            Then("it should return NotificationItem with corresponding uuid") {
+            Then("it should return RoutineItem with corresponding uuid") {
                 runTest {
-                    val expected = NotificationItem("1", "Notification 1", 1, 1, false)
+                    val expected = RoutineItem("1", "Routine 1", 1, 1, listOf(Day.SU, Day.MO))
                     Assertions.assertEquals(expected, value)
                 }
             }
         }
 
-        Scenario("adding NotificationItem") {
-            val valueThree = NotificationItem(
-                "3", "Notification 3", 1, 1, false
+        Scenario("adding RoutineItem") {
+            val valueThree = RoutineItem(
+                "3", "Routine 3", 1, 1, listOf(Day.MO)
             )
 
             When("calling collectState()") {
                 runTest {
-                    Assertions.assertEquals(NotificationsState.Loading, sut.notificationState.value)
+                    Assertions.assertEquals(RoutineState.Loading, sut.routineState.value)
                     val job = launch { sut.collectState() }
                     job.join()
                 }
             }
 
-            And("calling addNotificationItem with given NotificationItem") {
+            And("calling addRoutineItem with given RoutineItem") {
                 runTest {
-                    sut.addNotificationItem(valueThree)
+                    sut.addRoutineItem(valueThree)
                 }
             }
 
-            Then("given NotificationItem should be in database") {
+            Then("given RoutineItem should be in database") {
                 runTest {
-                    val value = sut.getNotificationItem("3")
+                    val value = sut.getRoutineItem("3")
                     Assertions.assertEquals(valueThree, value)
                 }
             }
         }
 
-        Scenario("updating NotificationItem") {
-            val updatedValue = NotificationItem(
-                "2", "Updated Notification 2", 1, 1, false
+        Scenario("updating RoutineItem") {
+            val updatedValue = RoutineItem(
+                "2", "Updated Routine 2", 1, 1, listOf(Day.MO)
             )
 
             When("calling collectState()") {
                 runTest {
-                    Assertions.assertEquals(NotificationsState.Loading, sut.notificationState.value)
+                    Assertions.assertEquals(RoutineState.Loading, sut.routineState.value)
                     val job = launch { sut.collectState() }
                     job.join()
                 }
             }
 
-            And("calling updateNotificationItem with given NotificationItem") {
+            And("calling updateRoutineItem() with given RoutineItem") {
                 runTest {
-                    sut.updateNotificationItem(updatedValue)
+                    sut.updateRoutineItem(updatedValue)
                 }
             }
 
-            Then("NotificationItem with corresponding uuid should be in updated") {
+            Then("RoutineItem with corresponding uuid should be in updated") {
                 runTest {
-                    val value = sut.getNotificationItem("2")
+                    val value = sut.getRoutineItem("2")
                     Assertions.assertEquals(updatedValue, value)
                 }
             }
         }
 
-        Scenario("deleting NotificationItem") {
+        Scenario("deleting RoutineItem") {
             val uuidOne = "1"
-            var value: NotificationItem? = null
+            var value: RoutineItem? = null
 
             When("calling collectState()") {
                 runTest {
-                    Assertions.assertEquals(NotificationsState.Loading, sut.notificationState.value)
+                    Assertions.assertEquals(RoutineState.Loading, sut.routineState.value)
                     val job = launch { sut.collectState() }
                     job.join()
                 }
             }
 
-            And("calling deleteNotificationItem with given NotificationItem") {
+            And("calling deleteRoutineItem with given RoutineItem") {
                 runTest {
-                    value = sut.getNotificationItem(uuidOne)
+                    value = sut.getRoutineItem(uuidOne)
                     value?.let {
-                        sut.deleteNotificationItem(it)
+                        sut.deleteRoutineItem(it)
                     }
                 }
             }
 
-            Then("given NotificationItem should be deleted") {
+            Then("given RoutineItem should be deleted") {
                 runTest {
-                    Assertions.assertNull(sut.getNotificationItem(uuidOne))
+                    Assertions.assertNull(sut.getRoutineItem(uuidOne))
                 }
             }
         }
