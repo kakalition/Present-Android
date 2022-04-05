@@ -11,32 +11,20 @@ import kotlinx.coroutines.flow.Flow
 interface RoutineItemDao : IRoutineItemDao{
 
     @Query("SELECT * FROM routine_item ORDER BY hour DESC")
-    override fun getRoutinesFlow(): Flow<List<RoutineItem>> {
-        TODO("Not yet implemented")
-    }
+    override fun getRoutinesFlow(): Flow<List<RoutineItem>>
 
     @Query("SELECT * FROM routine_item ORDER BY hour DESC")
-    override suspend fun getRoutines(): List<RoutineItem> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getRoutines(): List<RoutineItem>
 
     @Query("SELECT * FROM routine_item WHERE uuid = :uuid")
-    override suspend fun getRoutineByUuid(uuid: String): RoutineItem? {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getRoutineByUuid(uuid: String): RoutineItem?
 
     @Insert
-    override suspend fun addRoutine(value: RoutineItem) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun addRoutine(value: RoutineItem)
 
-    @Update()
-    override suspend fun updateRoutine(value: RoutineItem) {
-        TODO("Not yet implemented")
-    }
+    @Update
+    override suspend fun updateRoutine(value: RoutineItem)
 
     @Delete
-    override suspend fun deleteRoutine(value: RoutineItem) {
-        TODO("Not yet implemented")
-    }
+    override suspend fun deleteRoutine(value: RoutineItem)
 }
