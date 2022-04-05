@@ -35,6 +35,11 @@ internal object DatabaseModule {
         return db.getNotificationItemDao()
     }
 
+    @Provides
+    fun providesRoutineItemDao(db: PresentDatabase): RoutineItemDao {
+        return db.getRoutineItemDao()
+    }
+
 }
 
 @Module
@@ -45,4 +50,7 @@ internal abstract class DatabaseInterfaceModule {
 
     @Binds
     abstract fun bindsNotificationItemDao(dao: NotificationItemDao): INotificationItemDao
+
+    @Binds
+    abstract fun bindsRoutineItemDao(dao: RoutineItemDao): IRoutineItemDao
 }
