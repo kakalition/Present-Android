@@ -7,179 +7,167 @@ import com.daggery.present.breathpage.helper.TimerStatePairBuilder
 import com.daggery.present.breathpage.helper.TimerStatePairListBuilder
 import com.daggery.present.breathpage.mappers.BreathPatternStateHolderMapper
 import com.daggery.present.data.repositories.test.FakeBreathPatternRepository
-import com.daggery.present.domain.entities.BreathPatternItem
 import com.daggery.present.data.usecases.breathpattern.GetBreathPatternItemByUuidUseCase
+import com.daggery.present.domain.repositories.BreathPatternRepository
 import kotlinx.coroutines.*
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.*
 import org.junit.jupiter.api.Assertions
 import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import org.spekframework.spek2.style.gherkin.Feature
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 internal class BreathPageViewModelTest @Inject constructor(
 ) : Spek({
 
-    describe("BreathPage ViewModel Test") {
-        val repository = FakeBreathPatternRepository()
-        val timerStateBuilder = TimerStatePairListBuilder(TimerStatePairBuilder())
-        val mapper = BreathPatternStateHolderMapper()
-        val getBreathPatternItemByUuid = GetBreathPatternItemByUuidUseCase(repository)
-        val sut = BreathPageViewModel(timerStateBuilder, mapper, getBreathPatternItemByUuid)
+    Feature("BreathPage ViewModel Test") {
 
-        val uuidOne = "1"
-        val valueOne =
-            mapper.toBreathPatternStateHolder(BreathPatternItem("1", "Pattern 1", 1, 1, 1, 1, 1, 1))
-/*
-        1 ready
-        1 inhale
-        1 post inhale
-        1 exhale
-        1 post exhale
-        1 finished
-*/
-        val totalValueOneEmit = 6
+        lateinit var testCoroutineScheduler: TestCoroutineScheduler
+        lateinit var coroutineDispatcher: TestDispatcher
 
-        val uuidFour = "4"
+        lateinit var repository: BreathPatternRepository
+        lateinit var timerStateBuilder: TimerStatePairListBuilder
+        lateinit var mapper: BreathPatternStateHolderMapper
+        lateinit var getBreathPatternItemByUuid: GetBreathPatternItemByUuidUseCase
+        lateinit var sut: BreathPageViewModel
 
-        describe("#getBreathPatternItemStateHolder") {
-            context("calls this method with valid uuid") {
-                it("returns BreathPatternStateHolder with corresponding uuid") {
-                    runTest {
-                        sut.getBreathPatternStateHolder(uuidOne)
-                        val value = sut.breathPatternStateHolder
-                        Assertions.assertEquals(valueOne, value)
-                    }
+        beforeEachScenario {
+            testCoroutineScheduler = TestCoroutineScheduler()
+            coroutineDispatcher = StandardTestDispatcher(testCoroutineScheduler)
+
+            repository = FakeBreathPatternRepository()
+            timerStateBuilder = TimerStatePairListBuilder(TimerStatePairBuilder())
+            mapper = BreathPatternStateHolderMapper()
+            getBreathPatternItemByUuid = GetBreathPatternItemByUuidUseCase(repository)
+            sut = BreathPageViewModel(timerStateBuilder, mapper, getBreathPatternItemByUuid)
+
+            Dispatchers.setMain(coroutineDispatcher)
+        }
+
+        afterEachScenario {
+            Dispatchers.resetMain()
+        }
+
+        Scenario("getting BreathPatternStateHolder") {
+            val uuidOne = "1"
+            val valueOne = BreathPatternStateHolder(uuidOne, "Pattern 1", 1, 1, 1, 1, 1, 1)
+
+            When("calling getBreathPatternStateHolder with valid uuid") {
+                runTest {
+                    sut.getBreathPatternStateHolder(uuidOne)
                 }
             }
 
-            context("calls this method with invalid uuid") {
-                it("returns null") {
-                    runTest {
-                        sut.getBreathPatternStateHolder(uuidFour)
-                        val value: BreathPatternStateHolder? = try {
-                            sut.breathPatternStateHolder
-                        } catch(e: Exception) {
-                            null
-                        }
-                        Assertions.assertEquals(null, value)
-                    }
-                }
+            Then("breathPatternStateHolder will not be null") {
+                Assertions.assertNotNull(sut.breathPatternStateHolder)
+            }
+
+            Then("breathPatternStateHolder value will correspond to given uuid") {
+                Assertions.assertEquals(valueOne, sut.breathPatternStateHolder)
             }
         }
 
-        describe("#startSession") {
-            context("calls this method") {
-                it("starts session timer") {
-                    runBlocking {
-                        sut.getBreathPatternStateHolder(uuidOne)
-                        val value = mutableListOf<TimerState>()
+        Scenario("starting session") {
+            val uuidOne = "1"
+            val emitList = mutableListOf<Pair<TimerState, TimerState>>()
+            val totalEmit = 7 // Ground, Ready, Inhale, Hold, Exhale, Hold, Finished
 
-                        val job = launch {
-                            sut.timerStateFlow.collect {
-                                ensureActive()
-                                value.add(it)
-                                println(it.toString())
-                                if (it.currentState == BreathStateEnum.FINISHED) this.cancel()
-                            }
+            When("calling startSession and listen to emit value") {
+                runTest {
+                    sut.getBreathPatternStateHolder(uuidOne)
+
+                    sut.startSession()
+                    val job = launch {
+                        sut.timerState.collect {
+                            ensureActive()
+                            emitList.add(it)
+                            if (it.first.state == BreathStateEnum.FINISHED) cancel()
                         }
-
-                        sut.startSession()
-
-                        job.join()
-                        Assertions.assertEquals(totalValueOneEmit, value.size)
                     }
+
+                    job.join()
                 }
             }
 
-            context("timer goes off") {
-                it("change state to done") {
-                    runTest {
-                        sut.getBreathPatternStateHolder(uuidOne)
-                        val value = mutableListOf<TimerState>()
+            Then("it should emit 7 value") {
+                Assertions.assertEquals(totalEmit, emitList.size)
+            }
 
-                        val job = launch {
-                            sut.timerState.collect {
-                                ensureActive()
-                                value.add(it)
-                                if (it.currentState == BreathStateEnum.FINISHED) this.cancel()
-                            }
-                        }
-
-                        sut.startSession()
-
-                        job.join()
-
-                        Assertions.assertEquals(
-                            TimerState(0, BreathStateEnum.FINISHED),
-                            value.last()
-                        )
-                    }
-                }
+            And("last emit value state should be FINISHED") {
+                Assertions.assertEquals(BreathStateEnum.FINISHED, emitList.last().first.state)
             }
         }
 
-        describe("#pauseSession") {
-            context("calls this method") {
-                it("pause session timer") {
-                    runTest {
-                        sut.getBreathPatternStateHolder(uuidOne)
-                        val value = mutableListOf<TimerState>()
+        Scenario("stopping session") {
+            val uuidOne = "1"
+            val emitList = mutableListOf<Pair<TimerState, TimerState>>()
+            val totalEmit = 5 // Ground, Ready, Inhale, Hold, Exhale
 
-                        val job = launch {
-                            sut.timerState.collect {
-                                ensureActive()
-                                value.add(it)
-                                if (it.currentState == BreathStateEnum.INHALE && it.currentDuration == 1) {
-                                    sut.stopSession()
-                                    this.cancel()
-                                }
+            When("stopping session when emit value state is EXHALE") {
+                runTest {
+                    sut.getBreathPatternStateHolder(uuidOne)
+
+                    sut.startSession()
+                    val job = launch {
+                        sut.timerState.collect {
+                            ensureActive()
+                            emitList.add(it)
+                            if (it.first.state == BreathStateEnum.EXHALE) {
+                                val job = launch { sut.stopSession() }
+                                job.join()
                             }
+                            if (sut.isSessionPaused.value) cancel()
                         }
-
-                        sut.startSession()
-
-                        job.join()
-
-                        Assertions.assertEquals(
-                            TimerState(1, BreathStateEnum.INHALE),
-                            value.last()
-                        )
                     }
+
+                    job.join()
                 }
+            }
+
+            Then("it should emit 5 value") {
+                Assertions.assertEquals(totalEmit, emitList.size)
+            }
+
+            And("last emit value state should be EXHALE") {
+                Assertions.assertEquals(BreathStateEnum.EXHALE, emitList.last().first.state)
             }
         }
 
-        describe("#resetSession") {
-            context("calls this method") {
-                it("reset timer to ground state") {
-                    runTest {
-                        sut.getBreathPatternStateHolder(uuidOne)
-                        val value = mutableListOf<TimerState>()
+        Scenario("reset session") {
+            val uuidOne = "1"
+            val emitList = mutableListOf<Pair<TimerState, TimerState>>()
+            val totalEmit = 6 // Ground, Ready, Inhale, Hold, Exhale, Ground
 
-                        val job1 = launch {
-                            sut.timerState.collect {
-                                ensureActive()
-                                value.add(it)
-                                if (it.currentState == BreathStateEnum.INHALE && it.currentDuration == 1) {
-                                    sut.resetSession()
-                                    this.cancel()
-                                }
+            When("resetting session when emit value state is EXHALE") {
+                runTest {
+                    sut.getBreathPatternStateHolder(uuidOne)
+
+                    sut.startSession()
+                    val job = launch {
+                        sut.timerState.collect {
+                            ensureActive()
+                            emitList.add(it)
+                            if (it.first.state == BreathStateEnum.EXHALE) {
+                                val job = launch { sut.resetSession() }
+                                job.join()
+                                emitList.add(sut.timerState.value)
                             }
+                            if (sut.isSessionPaused.value) cancel()
                         }
-
-                        sut.startSession()
-
-                        job1.join()
-
-                        value.add(sut.timerState.value)
-                        Assertions.assertEquals(
-                            TimerState(0, BreathStateEnum.GROUND),
-                            value.last()
-                        )
                     }
+
+                    job.join()
                 }
             }
+
+            Then("it should emit 6 value") {
+                Assertions.assertEquals(totalEmit, emitList.size)
+            }
+
+            And("last emit value state should be GROUND") {
+                Assertions.assertEquals(BreathStateEnum.GROUND, emitList.last().first.state)
+            }
         }
+
     }
 })
