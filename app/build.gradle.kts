@@ -13,9 +13,9 @@ dependencies {
     implementation(project(Modules.breathpage))
     implementation(project(Modules.patternlistpage))
     implementation(project(Modules.notificationpage))
+    implementation(project(Modules.routinepage))
 /*
     implementation(project(Modules.dashboardpage))
-    implementation(project(Modules.routinepage))
 */
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
 

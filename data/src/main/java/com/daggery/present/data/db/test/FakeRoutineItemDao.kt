@@ -11,7 +11,7 @@ internal class FakeRoutineItemDao : IRoutineItemDao {
 
     private val routineItemFlow = MutableStateFlow(
         List(3) {
-            RoutineItemEntity("$it", "Routine $it", it, it, listOf(Day.SU, Day.MO))
+            RoutineItemEntity("$it", "Routine $it", it, it, listOf(Day.SU, Day.MO), false)
         }
     )
 

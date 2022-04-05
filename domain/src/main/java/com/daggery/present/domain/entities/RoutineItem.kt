@@ -5,5 +5,6 @@ data class RoutineItem(
     val name: String,
     val hour: Int,
     val minute: Int,
-    val repeatEvery: List<Day>
+    val repeatEvery: List<Day>,
+    val isActive: Boolean
 )

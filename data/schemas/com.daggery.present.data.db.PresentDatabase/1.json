@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "68f171111210aaee29cadb1a504efdd1",
+    "identityHash": "8516e1dee5e77b4fcc214652f7339b32",
     "entities": [
       {
         "tableName": "breath_pattern",
@@ -112,7 +112,7 @@
       },
       {
         "tableName": "routine_item",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `name` TEXT NOT NULL, `hour` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `repeat_every` TEXT NOT NULL, PRIMARY KEY(`uuid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uuid` TEXT NOT NULL, `name` TEXT NOT NULL, `hour` INTEGER NOT NULL, `minute` INTEGER NOT NULL, `repeat_every` TEXT NOT NULL, `is_active` INTEGER NOT NULL, PRIMARY KEY(`uuid`))",
         "fields": [
           {
             "fieldPath": "uuid",
@@ -143,6 +143,12 @@
             "columnName": "repeat_every",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "isActive",
+            "columnName": "is_active",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -158,7 +164,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '68f171111210aaee29cadb1a504efdd1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8516e1dee5e77b4fcc214652f7339b32')"
     ]
   }
 }

@@ -68,7 +68,7 @@ internal object RoutineItemRepositoryImplTest : Spek({
         }
 
         Scenario("adding Routine") {
-            val valueThree = RoutineItem("3", "Message", 0, 10, listOf(Day.MO, Day.TU))
+            val valueThree = RoutineItem("3", "Message", 0, 10, listOf(Day.MO, Day.TU), false)
 
             When("calling addRoutine() with given argument") {
                 runTest {
@@ -85,7 +85,7 @@ internal object RoutineItemRepositoryImplTest : Spek({
         }
 
         Scenario("updating Notification") {
-            val updatedTwo = RoutineItem("2", "Updated Message", 0, 10, listOf())
+            val updatedTwo = RoutineItem("2", "Updated Message", 0, 10, listOf(), false)
 
             When("calling updateNotification() with given argument") {
                 runTest {
